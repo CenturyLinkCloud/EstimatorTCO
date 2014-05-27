@@ -1,0 +1,10 @@
+.table {
+  display: table; }
+
+.table-row, .table-headers {
+  display: table-row; }
+
+.table-cell, .table-header {
+  display: table-cell; }
+
+/*# sourceMappingURL=src.map */

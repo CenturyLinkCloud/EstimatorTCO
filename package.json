@@ -1,0 +1,25 @@
+{
+  "name": "tier3",
+  "version": "0.0.1",
+  "devDependencies": {
+    "grunt": "^0.4.4",
+    "grunt-contrib-uglify": "^0.4.0",
+    "grunt-contrib-concat": "^0.3.0",
+    "grunt-contrib-watch": "^0.6.0",
+    "browserify": "^3.33.0",
+    "grunt-browserify": "^1.3.2",
+    "coffeeify": "^0.6.0",
+    "grunt-exec": "^0.4.5",
+    "grunt-concurrent": "^0.5.0",
+    "grunt-contrib-compass": "^0.7.2",
+    "grunt-sass": "^0.12.0",
+    "node-bourbon": "^1.0.0",
+    "grunt-autoprefixer": "^0.7.2",
+    "time-grunt": "^0.3.1",
+    "grunt-contrib-clean": "^0.5.0",
+    "grunt-mocha": "^0.4.10",
+    "chai": "^1.9.1",
+    "mocha": "^1.18.2",
+    "hamlify": "0.0.3"
+  }
+}

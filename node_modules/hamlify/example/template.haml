@@ -1,0 +1,6 @@
+%div
+	%h1 Hello, I'm @name
+	%p My links are:
+	%ul
+	- for link in @links
+		%li != require('./partial.haml')(link)
