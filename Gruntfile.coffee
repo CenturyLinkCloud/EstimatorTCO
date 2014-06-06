@@ -73,12 +73,12 @@ module.exports = (grunt) ->
         dest: "#{output}/javascripts/all.js"
         options:
           transform: ['coffeeify', 'hamlify']
-      test:
-        src: ["test/spec-runner.coffee"]
-        dest: "test/html/spec/spec-runner.js"
-        options:
-          transform: ['coffeeify', 'hamlify']
-          debug: true
+      # test:
+      #   src: ["test/spec-runner.coffee"]
+      #   dest: "test/html/spec/spec-runner.js"
+      #   options:
+      #     transform: ['coffeeify', 'hamlify']
+      #     debug: true
 
 
     # --------------------------------------------------------
@@ -146,7 +146,7 @@ module.exports = (grunt) ->
         options:
           reload: true
       scripts:
-        files: ["#{source}/js/**/*.{js,coffee,haml}"]
+        files: ["#{source}/js/**/*.{js,coffee}"]
         tasks: ["browserify"]
         options: 
           spawn: true
@@ -178,7 +178,7 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks "grunt-mocha"
 
   grunt.registerTask "default", ["browserify", "sass", "autoprefixer", "concat"]
-  grunt.registerTask "dev", ["browserify", "sass", "autoprefixer", "concat", "test", "watch"]
+  grunt.registerTask "dev", ["browserify", "sass", "autoprefixer", "concat", "watch"]
   grunt.registerTask 'test', ['browserify:dist', 'browserify:test', 'concat:vendor', 'mocha']
 
   grunt.option 'force', true

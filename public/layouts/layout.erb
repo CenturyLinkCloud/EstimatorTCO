@@ -30,7 +30,6 @@
                     </div>
                     <div class="pull-right">
                         <a href="/contact" class="btn btn-inverse">Contact</a>
-                        <!-- <span class="btn btn-inverse" id="lpButDivID-1393532216480"></span> -->
                         <div class="header-phone" style="">1.877.388.4373</div>
                     </div>
                 </div>
@@ -42,8 +41,7 @@
     <div class="container">
         <div class="row">
             <div class="span12">
-                <h1>Pay only for what you use</h1>
-                <p class="lead">Estimate your monthly bill using our cost estimator</p>
+                <h1>Total Cost of Ownership Tool</h1>
             </div>
         </div>
     </div>
@@ -52,28 +50,8 @@
 
 <section class="page-form">
 
-    <section class="green-section" id="monthly-total">
-        <div class="container">
-        <h3>Estimated Monthly Total</h3>
-        <div class="total-box">
-            <span class="price">$0.00</span>
-            <span class="estimated">estimated / month</span>
+<%= yield %>
 
-            <div class="buttons pull-right">
-                <span id="lpButDivID-1393532216480" class="btn btn-discuss"></span>
-                <script type="text/javascript" charset="UTF-8" src="https://sales.liveperson.net/hc/56948775/?cmd=mTagRepstate&site=56948775&buttonID=46&divID=lpButDivID-1393532216480&bt=3&c=1"></script>
-                
-            </div>
-        </div>
-        
-        </div>
-    </section>
-
-    <%= image_tag "/images/spinner.gif", class: "spinner" %>
-
-    <div class="container main-container">
-      <%= yield %>
-    </div>
 </section>
 
     <section class="page-footer">
