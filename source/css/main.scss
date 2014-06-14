@@ -566,6 +566,17 @@ input[type=text], input[type=number] {
     text-align: right;
   }
 
+  .red {
+    td {
+      color: #D22B30;
+    }
+  }
+
+  .green {
+    td {
+      color: #108141;
+    }
+  }
 
   th {
     text-transform: uppercase;
@@ -574,8 +585,19 @@ input[type=text], input[type=number] {
     border-bottom: 1px solid #D3D3D0;
   }
 
+  tr {
+    background: #fdfdfd;
+  }
+
   tr:nth-child(even) {
     background: #F0F0EE;
+    
+    &.variance {
+      background: #E5F3EB;
+    }
+    &.variance.red {
+      background: #F7EDED;
+    }
   }
 
   .left-align {
@@ -827,5 +849,39 @@ input[type=text], input[type=number] {
     .status-label {
       background: #a5d867;
     }
+  }
+}
+
+/* Share Section
+----------------------------------------------------- */
+
+.share-section {
+  background: $dark-green;
+  text-align: center;
+  padding: 43px 0;
+  display: none;
+  
+  .share-link {
+    width: 450px;
+  }
+
+  .btn {
+    color: white;
+    background: $green;
+    padding: 10px 30px;
+  }
+
+  p {
+    color: white;
+    margin-top: -10px;
+    margin-bottom: 10px;
+  }
+
+  a, h3 {
+    color: #addd6c;
+  }
+
+  a {
+    font-size: 18px;
   }
 }

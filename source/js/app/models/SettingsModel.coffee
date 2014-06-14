@@ -5,8 +5,8 @@ SettingsModel = Backbone.Model.extend
     quantity: 1
     os: "linux"
     storage: 100
-    bandwidth: 10
-    snapshots: 1
+    bandwidth: 1000
+    snapshots: 5
     matchCPU: false
     matchIOPS: false
     iops: 0

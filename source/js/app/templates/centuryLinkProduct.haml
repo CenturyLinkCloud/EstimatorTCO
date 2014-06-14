@@ -1,0 +1,3 @@
+%td= @model.clcEquivalentCpu()
+%td= @model.clcEquivalentRam()
+%td= accounting.formatMoney(@model.clcTotalPrice(), {precision: 3}) 

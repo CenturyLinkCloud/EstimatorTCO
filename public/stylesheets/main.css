@@ -398,13 +398,23 @@ input[type=text], input[type=number] {
     padding: 10px;
     color: #807f83;
     text-align: right; }
+  .results-table .red td {
+    color: #D22B30; }
+  .results-table .green td {
+    color: #108141; }
   .results-table th {
     text-transform: uppercase;
     letter-spacing: 1px;
     border-top: 1px solid #D3D3D0;
     border-bottom: 1px solid #D3D3D0; }
+  .results-table tr {
+    background: #fdfdfd; }
   .results-table tr:nth-child(even) {
     background: #F0F0EE; }
+    .results-table tr:nth-child(even).variance {
+      background: #E5F3EB; }
+    .results-table tr:nth-child(even).variance.red {
+      background: #F7EDED; }
   .results-table .left-align {
     text-align: left; }
   .results-table .right-align {
@@ -571,4 +581,26 @@ input[type=text], input[type=number] {
     border-color: #a5d867; }
     .support-select.selected .status-label {
       background: #a5d867; }
+
+/* Share Section
+----------------------------------------------------- */
+.share-section {
+  background: #294D37;
+  text-align: center;
+  padding: 43px 0;
+  display: none; }
+  .share-section .share-link {
+    width: 450px; }
+  .share-section .btn {
+    color: white;
+    background: #11853F;
+    padding: 10px 30px; }
+  .share-section p {
+    color: white;
+    margin-top: -10px;
+    margin-bottom: 10px; }
+  .share-section a, .share-section h3 {
+    color: #addd6c; }
+  .share-section a {
+    font-size: 18px; }
 /*# sourceMappingURL=main.css.map */

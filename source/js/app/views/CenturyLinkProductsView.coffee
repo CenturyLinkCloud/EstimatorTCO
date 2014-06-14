@@ -1,9 +1,9 @@
 PubSub = require '../PubSub.coffee'
-PlatformProductView = require '../views/PlatformProductView.coffee'
+CenturyLinkProductView = require '../views/CenturyLinkProductView.coffee'
 
-PlatformProductsView = Backbone.View.extend
+CenturyLinkProductsView = Backbone.View.extend
   
-  el: "#platform-products-table"
+  el: "#century-link-products-table"
   productViews: []
 
   initialize: (options) ->
@@ -13,12 +13,11 @@ PlatformProductsView = Backbone.View.extend
     @productsCollection = productsCollection
 
   updateProducts: ->
-    console.log "update products"
     return unless @productsCollection
-
+    
     @removeProducts()
     @productsCollection.each (product) =>
-      productView = new PlatformProductView model: product
+      productView = new CenturyLinkProductView model: product
       $("table", @$el).append productView.render().el
       @productViews.push productView
 
@@ -27,4 +26,4 @@ PlatformProductsView = Backbone.View.extend
       productView.remove()
 
 
-module.exports = PlatformProductsView
+module.exports = CenturyLinkProductsView

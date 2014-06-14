@@ -2,10 +2,8 @@
   .container
     %form
       .platform-select
-        %label{for: ""} Platform / Host
-        %select{id: "", name: "platform"}
-          %option{value: "aws"} AWS
-          %option{value: "google"} Google
+        %label{for: ""} Compare to
+        %select{id: "platform-select", name: "platform"}
       .actions
         %a.btn.share-btn{href: "#"} Share
         %a.btn.reset-btn{href: "#"} Reset
@@ -16,31 +14,28 @@
           %th{style: "width: 235px;"} Persistent Storage (EBS)
           %th Bandwidth
           %th Daily Snapshots
-          %th Match CPU
-          %th Match IOPS
+          %th Match CPU/RAM 
+          %th Match IOPS 
           %th{style: "width: 280px;"} IOPS Manual Entry
           %th Provisioned IOPS
         %tr
           %td{style: "width: 65px;"}
-            %input.number{value: "1", name: "quantity"}
+            %input.number{value: "", name: "quantity"}
           %td
             %select{name: "os"}
               %option{value: "linux"} Linux
               %option{value: "windows"} Windows
               %option{value: "redhat"} Red Hat
           %td 
-            %input.number{name: "storage"}
+            %input.number{name: "storage", value: ""}
             (GB)
           %td 
-            %input.number{name: "bandwidth"}
+            %input.number{name: "bandwidth", value: ""}
             (GB)
           %td
             %select{name: "snapshots"}
-              %option 1
-              %option 2
-              %option 3
-              %option 4
               %option 5
+              %option 14
           %td 
             %input{type: "checkbox", name: "matchCPU"}
           %td 
@@ -48,18 +43,20 @@
           %td 
             %input.number{name: "iops"}
           %td
-            0
+            %span.provisioned-iops 
+            %input.number{type: "hidden", name: "provisioned-iops"}
+
       .additional-features
-        %h4 Additional Features
-        %label{for: "mcm"}
-          %input{name: "mcm", id: "mcm", type: "checkbox"}
-          MCM
-        %label{for: "rightscale"}
-          %input{name: "rightscale", id: "rightscale", type: "checkbox"}
-          Rightscale
-        %label{for: "alertlogic"}
-          %input{name: "alertlogic", id: "alertlogic", type: "checkbox"}
-          Alertlogic
+        %h4 Add-Ons
+
+%section#share-panel.share-section
+  .container.share
+    %h3 Share
+    %p Your estimate can be shared with this url:
+    %input.share-link{type: "text"} 
+    %br
+    %br
+    %a.btn.btn-inverse.ok-btn Ok 
 
 = image_tag "/images/spinner.gif", class: "spinner"
 
@@ -78,43 +75,8 @@
           %th CPU
           %th RAM
           %th Hourly
-        %tr
-          %td.left-align r3 large
-          %td 2
-          %td 15
-          %td $0.638
-        %tr
-          %td.left-align r3 large
-          %td 2
-          %td 15
-          %td $0.638
-        %tr
-          %td.left-align r3 large
-          %td 2
-          %td 15
-          %td $0.638
-        %tr
-          %td.left-align r3 large
-          %td 2
-          %td 15
-          %td $0.638
-        %tr
-          %td.left-align r3 large
-          %td 2
-          %td 15
-          %td $0.638
-        %tr
-          %td.left-align r3 large
-          %td 2
-          %td 15
-          %td $0.638
-        %tr
-          %td.left-align r3 large
-          %td 2
-          %td 15
-          %td $0.638
 
-    .results-table{style: "width: 290px"}
+    #century-link-products-table.results-table{style: "width: 290px"}
       .results-table__header{style: "width: 290px"}
         = image_tag "cl-black-logo.png"
       %table
@@ -122,36 +84,8 @@
           %th CPU
           %th RAM
           %th Hourly
-        %tr
-          %td 2
-          %td 15
-          %td $0.638
-        %tr
-          %td 2
-          %td 15
-          %td $0.638
-        %tr
-          %td 2
-          %td 15
-          %td $0.638
-        %tr
-          %td 2
-          %td 15
-          %td $0.638
-        %tr
-          %td 2
-          %td 15
-          %td $0.638
-        %tr
-          %td 2
-          %td 15
-          %td $0.638
-        %tr
-          %td 2
-          %td 15
-          %td $0.638
  
-    .results-table.results-table--variance{style: "width: 312px"}
+    #variances-table.results-table.results-table--variance{style: "width: 312px"}
       .results-table__header{style: "width: 312px"}
         Variance
       %table
@@ -159,36 +93,6 @@
           %th Hourly
           %th Yearly
           %th % Savings
-        %tr
-          %td $0.638
-          %td $3,200.23
-          %td 29%
-        %tr
-          %td $0.638
-          %td $3,200.23
-          %td 29%
-        %tr
-          %td $0.638
-          %td $3,200.23
-          %td 29%
-        %tr
-          %td $0.638
-          %td $3,200.23
-          %td 29%
-        %tr
-          %td $0.638
-          %td $3,200.23
-          %td 29%
-        %tr
-          %td $0.638
-          %td $3,200.23
-          %td 29%
-        %tr
-          %td $0.638
-          %td $3,200.23
-          %td 29%
- 
-    
 
   #included.calculator-section
     %p 
