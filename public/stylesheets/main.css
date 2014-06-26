@@ -275,6 +275,8 @@ input[type=text], input[type=number] {
       font-size: 14px;
       letter-spacing: 1px;
       vertical-align: bottom; }
+    .green-section table th {
+      font-size: 12px; }
     .green-section table td {
       padding-top: 8px;
       vertical-align: middle;
@@ -282,6 +284,8 @@ input[type=text], input[type=number] {
       line-height: 1; }
     .green-section table th {
       padding-bottom: 0; }
+    .green-section table .bandwidth-field {
+      width: 161px; }
     .green-section table select {
       position: relative;
       top: 6px; }
@@ -384,6 +388,10 @@ input[type=text], input[type=number] {
     width: 314px;
     display: table-cell;
     vertical-align: middle; }
+    .results-table .results-table__header .description {
+      font-size: 13px;
+      margin-top: 10px;
+      margin-bottom: -5px; }
     .results-table .results-table__header img {
       display: inline-block; }
   .results-table.results-table--variance .results-table__header {

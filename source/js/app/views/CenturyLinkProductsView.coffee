@@ -16,6 +16,12 @@ CenturyLinkProductsView = Backbone.View.extend
     return unless @productsCollection
     
     @removeProducts()
+
+    if App.settingsModel.get("matchCPU")
+      $(".description", @$el).html "performance equivalent"
+    else
+      $(".description", @$el).html "resource allocation equivalent"
+
     @productsCollection.each (product) =>
       productView = new CenturyLinkProductView model: product
       $("table", @$el).append productView.render().el

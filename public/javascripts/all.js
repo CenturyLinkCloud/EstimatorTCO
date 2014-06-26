@@ -84,10 +84,27 @@ ProductModel = Backbone.Model.extend({
     return 5 * this.platformPricing.perMillionRequests / this.HOURS_PER_MONTH;
   },
   platformSnapshotCapacityUtilized: function() {
-    return (this.settings.get("storage") * this.platformPricing.firstSnapshot) + (this.settings.get("snapshots") - 1) * this.platformPricing.remainingSnapshotsEach * this.settings.get("storage");
+    var storage;
+    if (this.settings.get("iops") > 0) {
+      storage = 215;
+    } else {
+      storage = this.settings.get("storage");
+    }
+    return (storage * this.platformPricing.firstSnapshot) + (this.settings.get("snapshots") - 1) * this.platformPricing.remainingSnapshotsEach * storage;
   },
   platformSnapshotPrice: function() {
     return (this.platformSnapshotCapacityUtilized() * this.platformPricing.snapshotPerGB) / this.HOURS_PER_MONTH;
+  },
+  platformIOPSPrice: function() {
+    var ebs, iops;
+    iops = (this.settings.get("iops") * this.platformPricing.provisionedIOPSPerMonth) / this.HOURS_PER_MONTH;
+    ebs = (215 * this.platformPricing.provisionedPerGB) / this.HOURS_PER_MONTH;
+    if (this.settings.get("iops") > 0) {
+      console.log(iops, ebs);
+      return iops + ebs;
+    } else {
+      return 0;
+    }
   },
   platformOSPrice: function() {
     if (this.settings.get("os") === "linux") {
@@ -98,7 +115,11 @@ ProductModel = Backbone.Model.extend({
   },
   platformTotalPrice: function() {
     var perRCU, subtotal, total;
-    subtotal = (this.get("price") + this.platformBandwidthPrice() + this.platformStoragePrice() + this.platformSnapshotPrice() + this.platformStorageIORequests() + this.platformOSPrice()) * this.settings.get("quantity");
+    if (this.settings.get("iops") > 0) {
+      subtotal = (this.get("price") + this.platformBandwidthPrice() + this.platformIOPSPrice() + this.platformSnapshotPrice() + this.platformOSPrice()) * this.settings.get("quantity");
+    } else {
+      subtotal = (this.get("price") + this.platformBandwidthPrice() + this.platformIOPSPrice() + this.platformStoragePrice() + this.platformSnapshotPrice() + this.platformStorageIORequests() + this.platformOSPrice()) * this.settings.get("quantity");
+    }
     total = subtotal;
     if (App.platform.get("key") === "aws") {
       if (this.settings.get("mcm")) {
@@ -382,6 +403,11 @@ CenturyLinkProductsView = Backbone.View.extend({
       return;
     }
     this.removeProducts();
+    if (App.settingsModel.get("matchCPU")) {
+      $(".description", this.$el).html("performance equivalent");
+    } else {
+      $(".description", this.$el).html("resource allocation equivalent");
+    }
     return this.productsCollection.each((function(_this) {
       return function(product) {
         var productView;
@@ -465,7 +491,8 @@ InputPanelView = Backbone.View.extend({
   },
   resetForm: function(e) {
     e.preventDefault();
-    return this.model.clear().set(this.model.defaults);
+    this.model.clear().set(this.model.defaults);
+    return PubSub.trigger("inputPanel:change", this.model.defaults);
   },
   initPlatforms: function() {
     return this.options.platforms.each(function(platform) {
@@ -473,16 +500,19 @@ InputPanelView = Backbone.View.extend({
     });
   },
   updateIOPS: function(data) {
-    var manualIOPS, provisionedIOPS;
+    var iops;
     if (data.matchIOPS) {
-      provisionedIOPS = App.clcBenchmarking.iops;
+      iops = App.clcBenchmarking.iops;
+      $("input[name=manual-iops]", this.$el).val("");
     } else {
-      manualIOPS = $("input[name=iops]", this.$el).val();
-      provisionedIOPS = Math.max(manualIOPS, 0);
+      iops = $("input[name=manual-iops]", this.$el).val();
+      iops = Math.max(iops, 0);
     }
-    $(".provisioned-iops", this.$el).html(provisionedIOPS);
-    $("input[name=provisioned-iops]", this.$el).val(provisionedIOPS);
+    iops = Math.round(iops);
+    $(".provisioned-iops", this.$el).html(iops);
+    $("input[name=iops]", this.$el).val(iops);
     data = Backbone.Syphon.serialize(this);
+    PubSub.trigger("inputPanel:change", data);
     return data;
   },
   buildPlatformAdditionalFeatures: function() {
@@ -572,7 +602,6 @@ PlatformProductsView = Backbone.View.extend({
     return this.productsCollection = productsCollection;
   },
   updateProducts: function() {
-    console.log("update products");
     if (!this.productsCollection) {
       return;
     }

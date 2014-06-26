@@ -22,10 +22,23 @@ ProductModel = Backbone.Model.extend
     5 * @platformPricing.perMillionRequests / @HOURS_PER_MONTH
   
   platformSnapshotCapacityUtilized: ->
-    (@settings.get("storage") * @platformPricing.firstSnapshot) + (@settings.get("snapshots") - 1) * @platformPricing.remainingSnapshotsEach * @settings.get("storage")
+    if @settings.get("iops") > 0
+      storage = 215
+    else
+     storage = @settings.get("storage") 
+    (storage * @platformPricing.firstSnapshot) + (@settings.get("snapshots") - 1) * @platformPricing.remainingSnapshotsEach * storage
   
   platformSnapshotPrice: ->
     (@platformSnapshotCapacityUtilized() * @platformPricing.snapshotPerGB) / @HOURS_PER_MONTH
+
+  platformIOPSPrice: ->
+    iops = (@settings.get("iops") * @platformPricing.provisionedIOPSPerMonth) / @HOURS_PER_MONTH
+    ebs = (215 * @platformPricing.provisionedPerGB) / @HOURS_PER_MONTH
+    if @settings.get("iops") > 0
+      console.log iops, ebs
+      return iops + ebs
+    else 
+      return 0
 
   platformOSPrice: ->
     if @settings.get("os") is "linux"
@@ -34,7 +47,14 @@ ProductModel = Backbone.Model.extend
       return @.get(@settings.get("os"))
 
   platformTotalPrice: ->
-    subtotal = (@.get("price") + @platformBandwidthPrice() + @platformStoragePrice() + @platformSnapshotPrice() + @platformStorageIORequests() + @platformOSPrice()) * @settings.get("quantity")
+    if @settings.get("iops") > 0
+      subtotal = (@.get("price") + @platformBandwidthPrice() + @platformIOPSPrice() + 
+                  @platformSnapshotPrice() + @platformOSPrice()) * @settings.get("quantity")
+    else
+      subtotal = (@.get("price") + @platformBandwidthPrice() + @platformIOPSPrice() + 
+                  @platformStoragePrice() + @platformSnapshotPrice() + @platformStorageIORequests() + 
+                  @platformOSPrice()) * @settings.get("quantity")
+
     total = subtotal
     
     # AWS Specific extras

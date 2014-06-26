@@ -6,7 +6,7 @@
       "standardPerGB": 0.05,
       "perMillionRequests": 0.05,
       "provisionedPerGB": 0.125,
-      "provisionedIOPSPerMonth": 0.125,
+      "provisionedIOPSPerMonth": 0.10,
       "firstSnapshot": 0.7,
       "remainingSnapshotsEach": 0.03,
       "snapshotPerGB": 0.095,

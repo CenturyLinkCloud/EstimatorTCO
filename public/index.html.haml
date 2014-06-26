@@ -14,8 +14,8 @@
           %th{style: "width: 235px;"} Persistent Storage (EBS)
           %th Bandwidth
           %th Daily Snapshots
-          %th Match CPU/RAM 
-          %th Match IOPS 
+          %th Match CPU/RAM Performance 
+          %th Match IOPS Performance 
           %th{style: "width: 280px;"} IOPS Manual Entry
           %th Provisioned IOPS
         %tr
@@ -29,7 +29,7 @@
           %td 
             %input.number{name: "storage", value: ""}
             (GB)
-          %td 
+          %td.bandwidth-field
             %input.number{name: "bandwidth", value: ""}
             (GB)
           %td
@@ -41,10 +41,10 @@
           %td 
             %input{type: "checkbox", name: "matchIOPS"}
           %td 
-            %input.number{name: "iops"}
+            %input.number{name: "manual-iops"}
           %td
             %span.provisioned-iops 
-            %input.number{type: "hidden", name: "provisioned-iops"}
+            %input.number{type: "hidden", name: "iops"}
 
       .additional-features
         %h4 Add-Ons
@@ -79,6 +79,7 @@
     #century-link-products-table.results-table{style: "width: 290px"}
       .results-table__header{style: "width: 290px"}
         = image_tag "cl-black-logo.png"
+        %p.description resource allocation equivalent
       %table
         %tr
           %th CPU

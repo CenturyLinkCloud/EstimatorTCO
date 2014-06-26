@@ -13,7 +13,6 @@ PlatformProductsView = Backbone.View.extend
     @productsCollection = productsCollection
 
   updateProducts: ->
-    console.log "update products"
     return unless @productsCollection
 
     @removeProducts()

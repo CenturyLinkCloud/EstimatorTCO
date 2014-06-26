@@ -48,6 +48,7 @@ InputPanelView = Backbone.View.extend
   resetForm: (e) ->
     e.preventDefault()
     @model.clear().set(@model.defaults)
+    PubSub.trigger "inputPanel:change", @model.defaults
 
   initPlatforms: ->
     @options.platforms.each (platform) ->
@@ -55,15 +56,20 @@ InputPanelView = Backbone.View.extend
 
   updateIOPS: (data) ->
     if data.matchIOPS
-      provisionedIOPS = App.clcBenchmarking.iops
+      iops = App.clcBenchmarking.iops
+      $("input[name=manual-iops]", @$el).val("")  
     else
-      manualIOPS = $("input[name=iops]", @$el).val()  
-      provisionedIOPS = Math.max(manualIOPS, 0)
+      iops = $("input[name=manual-iops]", @$el).val()  
+      iops = Math.max(iops, 0)
 
-    $(".provisioned-iops", @$el).html(provisionedIOPS)
-    $("input[name=provisioned-iops]", @$el).val(provisionedIOPS)
+    iops = Math.round(iops)
+
+    $(".provisioned-iops", @$el).html(iops)
+    $("input[name=iops]", @$el).val(iops)
     
     data = Backbone.Syphon.serialize @
+
+    PubSub.trigger "inputPanel:change", data
     return data
 
   buildPlatformAdditionalFeatures: ->
