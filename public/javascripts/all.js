@@ -161,17 +161,23 @@ ProductModel = Backbone.Model.extend({
   clcCpuPrice: function() {
     return this.clcEquivalentCpu() * App.clcPricing.cpu;
   },
-  clcBandwithPrice: function() {
-    return this.settings.get("storage") * App.clcPricing.standardStorage;
-  },
   clcDiskPrice: function() {
+    var price;
+    if (parseInt(this.settings.get("snapshots")) === 5) {
+      price = this.settings.get("storage") * App.clcPricing.standardStorage;
+    } else if (parseInt(this.settings.get("snapshots")) === 14) {
+      price = this.settings.get("storage") * App.clcPricing.premiumStorage;
+    }
+    return price;
+  },
+  clcBandwidthPrice: function() {
     return this.settings.get("bandwidth") * App.clcPricing.bandwidth / this.HOURS_PER_MONTH;
   },
   clcOSPrice: function() {
     return App.clcPricing[this.settings.get("os")] * this.get("cpu");
   },
   clcTotalPrice: function() {
-    return (this.clcRamPrice() + this.clcCpuPrice() + this.clcDiskPrice() + this.clcBandwithPrice() + this.clcOSPrice()) * this.settings.get("quantity");
+    return (this.clcRamPrice() + this.clcCpuPrice() + this.clcDiskPrice() + this.clcBandwidthPrice() + this.clcOSPrice()) * this.settings.get("quantity");
   },
   variance: function() {
     return this.platformTotalPrice() - this.clcTotalPrice();

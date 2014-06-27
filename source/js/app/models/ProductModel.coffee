@@ -97,17 +97,21 @@ ProductModel = Backbone.Model.extend
   clcCpuPrice: ->
     @clcEquivalentCpu() * App.clcPricing.cpu
 
-  clcBandwithPrice: ->
-    @settings.get("storage") * App.clcPricing.standardStorage
-
   clcDiskPrice: ->
+    if parseInt(@settings.get("snapshots")) == 5
+      price = @settings.get("storage") * App.clcPricing.standardStorage
+    else if parseInt(@settings.get("snapshots")) == 14
+      price = @settings.get("storage") * App.clcPricing.premiumStorage
+    return price
+
+  clcBandwidthPrice: ->
     @settings.get("bandwidth") * App.clcPricing.bandwidth / @HOURS_PER_MONTH
 
   clcOSPrice: ->
     App.clcPricing[@settings.get("os")] * @.get("cpu")
 
   clcTotalPrice: ->
-    (@clcRamPrice() + @clcCpuPrice() + @clcDiskPrice() + @clcBandwithPrice() + @clcOSPrice()) * @settings.get("quantity")
+    (@clcRamPrice() + @clcCpuPrice() + @clcDiskPrice() + @clcBandwidthPrice() + @clcOSPrice()) * @settings.get("quantity")
 
 
   #--------------------------------------------------------
