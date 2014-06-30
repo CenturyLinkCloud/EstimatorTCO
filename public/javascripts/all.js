@@ -174,7 +174,7 @@ ProductModel = Backbone.Model.extend({
     return this.settings.get("bandwidth") * App.clcPricing.bandwidth / this.HOURS_PER_MONTH;
   },
   clcOSPrice: function() {
-    return App.clcPricing[this.settings.get("os")] * this.get("cpu");
+    return App.clcPricing[this.settings.get("os")] * this.clcEquivalentCpu();
   },
   clcTotalPrice: function() {
     return (this.clcRamPrice() + this.clcCpuPrice() + this.clcDiskPrice() + this.clcBandwidthPrice() + this.clcOSPrice()) * this.settings.get("quantity");

@@ -108,7 +108,7 @@ ProductModel = Backbone.Model.extend
     @settings.get("bandwidth") * App.clcPricing.bandwidth / @HOURS_PER_MONTH
 
   clcOSPrice: ->
-    App.clcPricing[@settings.get("os")] * @.get("cpu")
+    App.clcPricing[@settings.get("os")] * @clcEquivalentCpu()
 
   clcTotalPrice: ->
     (@clcRamPrice() + @clcCpuPrice() + @clcDiskPrice() + @clcBandwidthPrice() + @clcOSPrice()) * @settings.get("quantity")
