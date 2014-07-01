@@ -145,18 +145,20 @@ input[type=text], input[type=number] {
   padding: 7px;
   color: #807f83;
   border-bottom: solid 1px #D3D3D0; }
-  .table-cell .tooltip-wrapper, .table-header .tooltip-wrapper {
-    position: relative;
-    width: 100%;
-    display: block; }
-  .table-cell .has-tooltip, .table-header .has-tooltip {
-    position: absolute;
-    top: -6px;
-    left: 0;
-    height: 30px;
-    width: 100%;
-    display: block;
-    z-index: 10; }
+
+.tooltip-wrapper {
+  position: relative;
+  width: 100%;
+  display: block; }
+
+.has-tooltip {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  height: 50px;
+  width: 100%;
+  display: block;
+  z-index: 10; }
 
 .tooltip {
   width: 200px;
@@ -263,7 +265,6 @@ input[type=text], input[type=number] {
   .green-section form {
     margin-bottom: 0; }
   .green-section table {
-    overflow: hidden;
     clear: both;
     border-radius: 6px;
     background: #294D37; }

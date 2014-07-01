@@ -19,7 +19,7 @@
     "additionalFeatures": [
       {
         "key": "mcm",
-        "name": "MCM",
+        "name": "Cloud Manager",
         "pricing": 0.02
       },
       {

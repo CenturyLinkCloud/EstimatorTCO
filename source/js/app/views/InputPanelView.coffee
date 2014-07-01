@@ -24,6 +24,8 @@ InputPanelView = Backbone.View.extend
     @render()
     @initPlatforms()
     @onPlatformChanged()
+
+    $('.has-tooltip', @$el).tooltip()
    
   render: ->
     for key, value of @model.attributes

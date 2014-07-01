@@ -462,7 +462,8 @@ InputPanelView = Backbone.View.extend({
     this.listenTo(this.model, 'change', this.render);
     this.render();
     this.initPlatforms();
-    return this.onPlatformChanged();
+    this.onPlatformChanged();
+    return $('.has-tooltip', this.$el).tooltip();
   },
   render: function() {
     var key, value, _ref, _results;

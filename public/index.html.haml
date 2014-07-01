@@ -11,11 +11,26 @@
         %tr
           %th{style: "width: 75px;"} # of VMs
           %th Operating System
-          %th{style: "width: 235px;"} Persistent Storage (EBS)
-          %th Bandwidth
-          %th Daily Snapshots
-          %th Match CPU/RAM Performance 
-          %th Match IOPS Performance 
+          %th{style: "width: 235px;"} 
+            Persistent Storage (EBS)
+            .tooltip-wrapper
+              %a.has-tooltip{href:"#", data: {toggle: "tooltip", title: "Storage per VM"}}
+          %th 
+            Bandwidth
+            .tooltip-wrapper
+              %a.has-tooltip{href:"#", data: {toggle: "tooltip", title: "Estimated outbound bandwidth usage"}}
+          %th 
+            Daily Snapshots
+            .tooltip-wrapper
+              %a.has-tooltip{href:"#", data: {toggle: "tooltip", title: "Our standard storage includes 5 days of rolling VM snapshots; Premium includes 14 days at a secondary data center."}}
+          %th 
+            Match CPU/RAM Performance 
+            .tooltip-wrapper
+              %a.has-tooltip{href:"#", data: {toggle: "tooltip", title: "Match CenturyLink VM Performance vs competitors based on CloudHarmony.com benchmarks."}}
+          %th 
+            Match IOPS Performance 
+            .tooltip-wrapper
+              %a.has-tooltip{href:"#", data: {toggle: "tooltip", title: "Match CenturyLink VM IOPS performance vs competitors based on CloudHarmony.com benchmarks."}}
           %th{style: "width: 280px;"} IOPS Manual Entry
           %th Provisioned IOPS
         %tr
