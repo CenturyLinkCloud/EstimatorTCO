@@ -264,6 +264,7 @@ input[type=text], input[type=number] {
     margin-bottom: 0; }
   .green-section table {
     overflow: hidden;
+    clear: both;
     border-radius: 6px;
     background: #294D37; }
     .green-section table td, .green-section table th {
@@ -272,7 +273,7 @@ input[type=text], input[type=number] {
       text-transform: uppercase;
       font-weight: normal;
       padding: 12px 15px;
-      font-size: 14px;
+      font-size: 11px;
       letter-spacing: 1px;
       vertical-align: bottom; }
     .green-section table th {

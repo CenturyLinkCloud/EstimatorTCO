@@ -367,6 +367,7 @@ input[type=text], input[type=number] {
 
   table {
     overflow: hidden;
+    clear: both;
     border-radius: 6px;
     background: $dark-green;
     
@@ -376,7 +377,7 @@ input[type=text], input[type=number] {
       text-transform: uppercase;
       font-weight: normal;
       padding: 12px 15px;
-      font-size: 14px;
+      font-size: 11px;
       letter-spacing: 1px;
       vertical-align: bottom;
     }
