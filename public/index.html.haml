@@ -35,17 +35,17 @@
           %th Provisioned IOPS
         %tr
           %td{style: "width: 65px;"}
-            %input.number{value: "", name: "quantity"}
+            %input.number{value: "", name: "quantity", type:"text"}
           %td
             %select{name: "os"}
               %option{value: "linux"} Linux
               %option{value: "windows"} Windows
               %option{value: "redhat"} Red Hat
           %td 
-            %input.number{name: "storage", value: ""}
+            %input.number{name: "storage", value: "", type:"text"}
             (GB)
           %td.bandwidth-field
-            %input.number{name: "bandwidth", value: ""}
+            %input.number{name: "bandwidth", value: "", type:"text"}
             (GB)
           %td
             %select{name: "snapshots"}
@@ -56,10 +56,10 @@
           %td 
             %input{type: "checkbox", name: "matchIOPS"}
           %td 
-            %input.number{name: "manual-iops"}
+            %input.number{name: "manual-iops", type:"text"}
           %td
             %span.provisioned-iops 
-            %input.number{type: "hidden", name: "iops"}
+            %input.number{type: "hidden", name: "iops", type:"text"}
 
       .additional-features
         %h4 AWS Add-Ons (equivalent features built-in CenturyLink Cloud)

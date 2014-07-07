@@ -511,8 +511,10 @@ InputPanelView = Backbone.View.extend({
     if (data.matchIOPS) {
       iops = App.clcBenchmarking.iops;
       $("input[name=manual-iops]", this.$el).val("");
+      $("input[name=manual-iops]").attr("disabled", true);
     } else {
       iops = $("input[name=manual-iops]", this.$el).val();
+      $("input[name=manual-iops]").attr("disabled", false);
       iops = Math.max(iops, 0);
     }
     iops = Math.round(iops);

@@ -260,8 +260,8 @@ input[type=text], input[type=number] {
   overflow: hidden;
   z-index: 100;
   color: white; }
-  .green-section input {
-    width: 50px; }
+  .green-section input[type=text] {
+    width: 50px !important; }
   .green-section form {
     margin-bottom: 0; }
   .green-section table {
