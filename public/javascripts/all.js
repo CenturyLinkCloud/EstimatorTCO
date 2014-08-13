@@ -271,7 +271,7 @@ $c = function(text) {
 
 $o = [];
 
-$o.push("<label for='" + ($e($c(this.model.key))) + "'>\n  <input id='" + ($e($c(this.model.key))) + "' name='" + ($e($c(this.model.key))) + "' type='checkbox' selected='" + ($e($c(this.selected))) + "'>");
+$o.push("<label for='" + ($e($c(this.model.key))) + "'>\n  <input id='" + ($e($c(this.model.key))) + "' name='" + ($e($c(this.model.key))) + "' type='checkbox' checked='" + ($e($c(this.selected))) + "'>");
 
 $o.push("  " + $e($c(this.model.name)));
 
