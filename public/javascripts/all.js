@@ -20,6 +20,29 @@ module.exports = Router;
 
 
 },{"./PubSub.coffee":1}],3:[function(require,module,exports){
+var Utils;
+
+Utils = {
+  getUrlParameter: function(variable) {
+    var i, pair, query, vars;
+    query = window.location.search.substring(1);
+    vars = query.split("&");
+    i = 0;
+    while (i < vars.length) {
+      pair = vars[i].split("=");
+      if (pair[0] === variable) {
+        return pair[1];
+      }
+      i++;
+    }
+    return false;
+  }
+};
+
+module.exports = Utils;
+
+
+},{}],4:[function(require,module,exports){
 var PlatformCollection, PlatformModel;
 
 PlatformModel = require('../models/PlatformModel.coffee');
@@ -49,7 +72,7 @@ PlatformCollection = Backbone.Collection.extend({
 module.exports = PlatformCollection;
 
 
-},{"../models/PlatformModel.coffee":5}],4:[function(require,module,exports){
+},{"../models/PlatformModel.coffee":6}],5:[function(require,module,exports){
 var ProductCollection, ProductModel;
 
 ProductModel = require('../models/ProductModel.coffee');
@@ -62,7 +85,7 @@ ProductCollection = Backbone.Collection.extend({
 module.exports = ProductCollection;
 
 
-},{"../models/ProductModel.coffee":6}],5:[function(require,module,exports){
+},{"../models/ProductModel.coffee":7}],6:[function(require,module,exports){
 var PlatformModel;
 
 PlatformModel = Backbone.Model.extend({
@@ -72,7 +95,7 @@ PlatformModel = Backbone.Model.extend({
 module.exports = PlatformModel;
 
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 var ProductModel;
 
 ProductModel = Backbone.Model.extend({
@@ -109,7 +132,6 @@ ProductModel = Backbone.Model.extend({
     iops = (this.settings.get("iops") * this.platformPricing.provisionedIOPSPerMonth) / this.HOURS_PER_MONTH;
     ebs = (215 * this.platformPricing.provisionedPerGB) / this.HOURS_PER_MONTH;
     if (this.settings.get("iops") > 0) {
-      console.log(iops, ebs);
       return iops + ebs;
     } else {
       return 0;
@@ -203,7 +225,7 @@ ProductModel = Backbone.Model.extend({
 module.exports = ProductModel;
 
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 var SettingsModel;
 
 SettingsModel = Backbone.Model.extend({
@@ -225,7 +247,7 @@ SettingsModel = Backbone.Model.extend({
 module.exports = SettingsModel;
 
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 module.exports = function(options) {
 return (function() {
 var $c, $e, $o;
@@ -249,7 +271,7 @@ $c = function(text) {
 
 $o = [];
 
-$o.push("<label for='" + ($e($c(this.model.key))) + "'>\n  <input id='" + ($e($c(this.model.key))) + "' name='" + ($e($c(this.model.key))) + "' type='checkbox'>");
+$o.push("<label for='" + ($e($c(this.model.key))) + "'>\n  <input id='" + ($e($c(this.model.key))) + "' name='" + ($e($c(this.model.key))) + "' type='checkbox' selected='" + ($e($c(this.selected))) + "'>");
 
 $o.push("  " + $e($c(this.model.name)));
 
@@ -259,7 +281,7 @@ return $o.join("\n").replace(/\s(\w+)='true'/mg, ' $1').replace(/\s(\w+)='fa
 
 }).call(options)
 };
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 module.exports = function(options) {
 return (function() {
 var $c, $e, $o;
@@ -291,7 +313,7 @@ return $o.join("\n").replace(/\s(\w+)='true'/mg, ' $1').replace(/\s(\w+)='fa
 
 }).call(options)
 };
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 module.exports = function(options) {
 return (function() {
 var $c, $e, $o;
@@ -323,7 +345,7 @@ return $o.join("\n").replace(/\s(\w+)='true'/mg, ' $1').replace(/\s(\w+)='fa
 
 }).call(options)
 };
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 module.exports = function(options) {
 return (function() {
 var $c, $e, $o;
@@ -357,18 +379,21 @@ return $o.join("\n").replace(/\s(\w+)='true'/mg, ' $1').replace(/\s(\w+)='fa
 
 }).call(options)
 };
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 var AdditionalFeatureView;
 
 AdditionalFeatureView = Backbone.View.extend({
   tagName: "span",
   className: "additional-feature",
-  initialize: function(options) {},
+  initialize: function(options) {
+    return this.options = options || {};
+  },
   render: function() {
     var template;
     template = require("../templates/additionalFeature.haml");
     this.$el.html(template({
-      model: this.model
+      model: this.model,
+      selected: this.options.selected
     }));
     return this;
   }
@@ -377,7 +402,7 @@ AdditionalFeatureView = Backbone.View.extend({
 module.exports = AdditionalFeatureView;
 
 
-},{"../templates/additionalFeature.haml":8}],13:[function(require,module,exports){
+},{"../templates/additionalFeature.haml":9}],14:[function(require,module,exports){
 var CenturyLinkProductView;
 
 CenturyLinkProductView = Backbone.View.extend({
@@ -397,7 +422,7 @@ CenturyLinkProductView = Backbone.View.extend({
 module.exports = CenturyLinkProductView;
 
 
-},{"../templates/centuryLinkProduct.haml":9}],14:[function(require,module,exports){
+},{"../templates/centuryLinkProduct.haml":10}],15:[function(require,module,exports){
 var CenturyLinkProductView, CenturyLinkProductsView, PubSub;
 
 PubSub = require('../PubSub.coffee');
@@ -446,7 +471,7 @@ CenturyLinkProductsView = Backbone.View.extend({
 module.exports = CenturyLinkProductsView;
 
 
-},{"../PubSub.coffee":1,"../views/CenturyLinkProductView.coffee":13}],15:[function(require,module,exports){
+},{"../PubSub.coffee":1,"../views/CenturyLinkProductView.coffee":14}],16:[function(require,module,exports){
 var AdditionalFeatureView, InputPanelView, PubSub, SettingsModel;
 
 PubSub = require('../PubSub.coffee');
@@ -463,7 +488,7 @@ InputPanelView = Backbone.View.extend({
     "change select": "onFormChanged",
     "keyup input": "onFormChanged",
     "change input[type=checkbox]": "onFormChanged",
-    "click .share-btn": "openSharePanel",
+    "click .share-btn": "saveEstimate",
     "click .reset-btn": "resetForm"
   },
   initialize: function(options) {
@@ -546,17 +571,34 @@ InputPanelView = Backbone.View.extend({
       return function(feature) {
         var additionalFeatureView;
         additionalFeatureView = new AdditionalFeatureView({
-          model: feature
+          model: feature,
+          selected: _this.model.attributes[feature.key]
         });
         $(".additional-features", _this.$el).append(additionalFeatureView.render().el);
         return _this.additionalFeatures.push(additionalFeatureView);
       };
     })(this));
   },
-  openSharePanel: function(e) {
-    var shareLink;
+  saveEstimate: function(e) {
     e.preventDefault();
-    shareLink = location.href + "#" + JSON.stringify(this.model.attributes);
+    return $.ajax({
+      type: "POST",
+      url: "" + App.dbUrlBase + "/estimates/",
+      data: JSON.stringify(this.model.attributes),
+      dataType: "json",
+      success: (function(_this) {
+        return function(response) {
+          return _this.openSharePanel(response._id);
+        };
+      })(this),
+      error: function(response, status) {
+        return console.log("Error", response, status);
+      }
+    });
+  },
+  openSharePanel: function(estimateID) {
+    var shareLink;
+    shareLink = "" + window.location.origin + window.location.pathname + "?id=" + estimateID;
     $(".share-link").val(shareLink);
     $(".share-link").attr("href", shareLink);
     $(".share-section").slideDown(300);
@@ -583,7 +625,7 @@ InputPanelView = Backbone.View.extend({
 module.exports = InputPanelView;
 
 
-},{"../PubSub.coffee":1,"../models/SettingsModel.coffee":7,"./AdditionalFeatureView.coffee":12}],16:[function(require,module,exports){
+},{"../PubSub.coffee":1,"../models/SettingsModel.coffee":8,"./AdditionalFeatureView.coffee":13}],17:[function(require,module,exports){
 var PlatformProductView;
 
 PlatformProductView = Backbone.View.extend({
@@ -603,7 +645,7 @@ PlatformProductView = Backbone.View.extend({
 module.exports = PlatformProductView;
 
 
-},{"../templates/platformProduct.haml":10}],17:[function(require,module,exports){
+},{"../templates/platformProduct.haml":11}],18:[function(require,module,exports){
 var PlatformProductView, PlatformProductsView, PubSub;
 
 PubSub = require('../PubSub.coffee');
@@ -647,7 +689,7 @@ PlatformProductsView = Backbone.View.extend({
 module.exports = PlatformProductsView;
 
 
-},{"../PubSub.coffee":1,"../views/PlatformProductView.coffee":16}],18:[function(require,module,exports){
+},{"../PubSub.coffee":1,"../views/PlatformProductView.coffee":17}],19:[function(require,module,exports){
 var VarianceView;
 
 VarianceView = Backbone.View.extend({
@@ -672,7 +714,7 @@ VarianceView = Backbone.View.extend({
 module.exports = VarianceView;
 
 
-},{"../templates/variance.haml":11}],19:[function(require,module,exports){
+},{"../templates/variance.haml":12}],20:[function(require,module,exports){
 var PubSub, VarianceView, VariancesView;
 
 PubSub = require('../PubSub.coffee');
@@ -716,8 +758,8 @@ VariancesView = Backbone.View.extend({
 module.exports = VariancesView;
 
 
-},{"../PubSub.coffee":1,"../views/VarianceView.coffee":18}],20:[function(require,module,exports){
-var CenturyLinkProductsView, InputPanelView, PlatformProductsView, PlatformsCollection, ProductsCollection, PubSub, Router, SettingsModel, VariancesView;
+},{"../PubSub.coffee":1,"../views/VarianceView.coffee":19}],21:[function(require,module,exports){
+var CenturyLinkProductsView, InputPanelView, PlatformProductsView, PlatformsCollection, ProductsCollection, PubSub, Router, SettingsModel, Utils, VariancesView;
 
 PubSub = require('./app/PubSub.coffee');
 
@@ -737,17 +779,15 @@ PlatformsCollection = require('./app/collections/PlatformsCollection.coffee');
 
 ProductsCollection = require('./app/collections/ProductsCollection.coffee');
 
+Utils = require('./app/Utils.coffee');
+
 window.App = {
   readyToInitCount: 0,
   dbUrlBase: "http://10.90.102.15:9200/tco",
   useJSON: false,
   init: function() {
-    var dataFromURL;
-    dataFromURL = this.getDataFromURL();
+    this.getDataFromURL();
     this.settingsModel = new SettingsModel();
-    if (dataFromURL) {
-      this.settingsModel.set(dataFromURL);
-    }
     this.platformsCollection = new PlatformsCollection();
     this.productsCollection = new ProductsCollection();
     this.loadCLCData();
@@ -823,15 +863,22 @@ window.App = {
     });
   },
   getDataFromURL: function() {
-    var data, dataString;
-    if (location.hash.length > 10) {
-      dataString = location.hash.substring(1);
-      data = JSON.parse(dataString);
-      location.hash = "";
-      history.pushState("", document.title, window.location.pathname);
-      return data;
-    } else {
-      return null;
+    var shareId;
+    shareId = Utils.getUrlParameter("id");
+    if (shareId) {
+      return $.ajax({
+        type: "GET",
+        url: "" + App.dbUrlBase + "/estimates/" + shareId,
+        dataType: "json",
+        success: (function(_this) {
+          return function(response) {
+            return _this.settingsModel.set(response._source);
+          };
+        })(this),
+        error: function(response, status) {
+          return console.log("Error", response, status);
+        }
+      });
     }
   }
 };
@@ -841,4 +888,4 @@ $(function() {
 });
 
 
-},{"./app/PubSub.coffee":1,"./app/Router.coffee":2,"./app/collections/PlatformsCollection.coffee":3,"./app/collections/ProductsCollection.coffee":4,"./app/models/SettingsModel.coffee":7,"./app/views/CenturyLinkProductsView.coffee":14,"./app/views/InputPanelView.coffee":15,"./app/views/PlatformProductsView.coffee":17,"./app/views/VariancesView.coffee":19}]},{},[20])
+},{"./app/PubSub.coffee":1,"./app/Router.coffee":2,"./app/Utils.coffee":3,"./app/collections/PlatformsCollection.coffee":4,"./app/collections/ProductsCollection.coffee":5,"./app/models/SettingsModel.coffee":8,"./app/views/CenturyLinkProductsView.coffee":15,"./app/views/InputPanelView.coffee":16,"./app/views/PlatformProductsView.coffee":18,"./app/views/VariancesView.coffee":20}]},{},[21])

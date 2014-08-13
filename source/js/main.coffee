@@ -17,7 +17,7 @@ CenturyLinkProductsView = require './app/views/CenturyLinkProductsView.coffee'
 SettingsModel           = require './app/models/SettingsModel.coffee'
 PlatformsCollection     = require './app/collections/PlatformsCollection.coffee'
 ProductsCollection      = require './app/collections/ProductsCollection.coffee'
-
+Utils                   = require './app/Utils.coffee'
 
 #--------------------------------------------------------
 # Init
@@ -29,10 +29,10 @@ window.App =
   useJSON: false
 
   init: ->
-    dataFromURL = @getDataFromURL()
+    @getDataFromURL()
 
     @settingsModel = new SettingsModel()
-    @settingsModel.set(dataFromURL) if dataFromURL
+    # @settingsModel.set(dataFromURL) if dataFromURL
 
     @platformsCollection = new PlatformsCollection()
     @productsCollection = new ProductsCollection()
@@ -122,14 +122,18 @@ window.App =
   #--------------------------------------------------------
 
   getDataFromURL: ->
-    if location.hash.length > 10
-      dataString = location.hash.substring(1)
-      data = JSON.parse dataString
-      location.hash = ""
-      history.pushState("", document.title, window.location.pathname)
-      return data
-    else
-      return null
+    shareId = Utils.getUrlParameter("id")
+
+    if shareId
+      $.ajax
+        type: "GET"
+        url: "#{App.dbUrlBase}/estimates/#{shareId}"
+        dataType: "json"
+        success: (response) =>
+          @settingsModel.set(response._source)
+        error: (response, status) ->
+          console.log "Error", response, status
+
 
 
 #--------------------------------------------------------

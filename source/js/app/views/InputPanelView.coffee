@@ -12,7 +12,7 @@ InputPanelView = Backbone.View.extend
     "change select": "onFormChanged"
     "keyup input": "onFormChanged"
     "change input[type=checkbox]": "onFormChanged"
-    "click .share-btn": "openSharePanel"
+    "click .share-btn": "saveEstimate"
     "click .reset-btn": "resetForm"
 
   initialize: (options) ->
@@ -77,6 +77,7 @@ InputPanelView = Backbone.View.extend
     return data
 
   buildPlatformAdditionalFeatures: ->
+
     features = App.platform.get("additionalFeatures")
 
     _.each @additionalFeatures, (additionalFeatureView) =>
@@ -84,13 +85,25 @@ InputPanelView = Backbone.View.extend
 
     @additionalFeatures = []
     _.each features, (feature) =>
-      additionalFeatureView = new AdditionalFeatureView(model: feature)
+      additionalFeatureView = new AdditionalFeatureView(model: feature, selected: @model.attributes[feature.key])
       $(".additional-features", @$el).append additionalFeatureView.render().el
       @additionalFeatures.push additionalFeatureView
 
-  openSharePanel: (e) ->
+  saveEstimate: (e) ->
     e.preventDefault()
-    shareLink = location.href + "#" + JSON.stringify(@model.attributes)
+
+    $.ajax
+      type: "POST"
+      url: "#{App.dbUrlBase}/estimates/"
+      data: JSON.stringify(@model.attributes)
+      dataType: "json"
+      success: (response) =>
+        @openSharePanel(response._id)
+      error: (response, status) ->
+        console.log "Error", response, status      
+
+  openSharePanel: (estimateID) ->
+    shareLink = "#{window.location.origin}#{window.location.pathname}?id=#{estimateID}"
 
     $(".share-link").val(shareLink)
     $(".share-link").attr("href", shareLink)
@@ -105,7 +118,6 @@ InputPanelView = Backbone.View.extend
       e.preventDefault()
       $(".share-section").slideUp(300)
       $("#input-panel").slideDown(300)      
-
 
   ensureNumber: (e) ->
     charCode = (if (e.which) then e.which else e.keyCode)

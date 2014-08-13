@@ -35,7 +35,6 @@ ProductModel = Backbone.Model.extend
     iops = (@settings.get("iops") * @platformPricing.provisionedIOPSPerMonth) / @HOURS_PER_MONTH
     ebs = (215 * @platformPricing.provisionedPerGB) / @HOURS_PER_MONTH
     if @settings.get("iops") > 0
-      console.log iops, ebs
       return iops + ebs
     else 
       return 0

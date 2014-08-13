@@ -4,10 +4,11 @@ AdditionalFeatureView = Backbone.View.extend
   className: "additional-feature"
 
   initialize: (options) ->
-
+    @options = options || {};
+  
   render: ->
     template = require "../templates/additionalFeature.haml"
-    @$el.html template(model: @model)
+    @$el.html template(model: @model, selected: @options.selected)
 
     return @
 
