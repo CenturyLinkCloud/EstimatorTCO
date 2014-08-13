@@ -85,7 +85,8 @@ InputPanelView = Backbone.View.extend
 
     @additionalFeatures = []
     _.each features, (feature) =>
-      additionalFeatureView = new AdditionalFeatureView(model: feature, selected: @model.attributes[feature.key])
+      selected = @model.attributes[feature.key] || false
+      additionalFeatureView = new AdditionalFeatureView(model: feature, selected: selected)
       $(".additional-features", @$el).append additionalFeatureView.render().el
       @additionalFeatures.push additionalFeatureView
 

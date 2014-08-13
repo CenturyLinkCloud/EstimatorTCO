@@ -569,10 +569,11 @@ InputPanelView = Backbone.View.extend({
     this.additionalFeatures = [];
     return _.each(features, (function(_this) {
       return function(feature) {
-        var additionalFeatureView;
+        var additionalFeatureView, selected;
+        selected = _this.model.attributes[feature.key] || false;
         additionalFeatureView = new AdditionalFeatureView({
           model: feature,
-          selected: _this.model.attributes[feature.key]
+          selected: selected
         });
         $(".additional-features", _this.$el).append(additionalFeatureView.render().el);
         return _this.additionalFeatures.push(additionalFeatureView);
