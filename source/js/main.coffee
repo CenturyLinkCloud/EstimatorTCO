@@ -8,15 +8,15 @@
 # Imports
 #--------------------------------------------------------
 
-PubSub = require './app/PubSub.coffee'
-Router = require './app/Router.coffee'
-InputPanelView = require './app/views/InputPanelView.coffee'
-PlatformProductsView = require './app/views/PlatformProductsView.coffee'
-VariancesView = require './app/views/VariancesView.coffee'
+PubSub                  = require './app/PubSub.coffee'
+Router                  = require './app/Router.coffee'
+InputPanelView          = require './app/views/InputPanelView.coffee'
+PlatformProductsView    = require './app/views/PlatformProductsView.coffee'
+VariancesView           = require './app/views/VariancesView.coffee'
 CenturyLinkProductsView = require './app/views/CenturyLinkProductsView.coffee'
-SettingsModel = require './app/models/SettingsModel.coffee'
-PlatformsCollection = require './app/collections/PlatformsCollection.coffee'
-ProductsCollection = require './app/collections/ProductsCollection.coffee'
+SettingsModel           = require './app/models/SettingsModel.coffee'
+PlatformsCollection     = require './app/collections/PlatformsCollection.coffee'
+ProductsCollection      = require './app/collections/ProductsCollection.coffee'
 
 
 #--------------------------------------------------------
@@ -25,6 +25,8 @@ ProductsCollection = require './app/collections/ProductsCollection.coffee'
 
 window.App = 
   readyToInitCount: 0
+  dbUrlBase: "http://10.90.102.15:9200/tco"
+  useJSON: false
 
   init: ->
     dataFromURL = @getDataFromURL()
@@ -90,7 +92,13 @@ window.App =
   #--------------------------------------------------------
 
   loadCLCData: ->
-    $.getJSON "json/clc.json", (data) =>
+    if @useJSON
+      clcDataURL = "json/clc.json"
+    else
+      clcDataURL = "#{App.dbUrlBase}/clc-pricing/1/_source"
+
+    $.getJSON clcDataURL, (response) =>
+      data = response.data[0]
       @clcPricing = data.pricing
       @clcBenchmarking = data.benchmarking
       @readyToInitCount += 1

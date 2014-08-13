@@ -26,9 +26,18 @@ PlatformModel = require('../models/PlatformModel.coffee');
 
 PlatformCollection = Backbone.Collection.extend({
   model: PlatformModel,
-  url: "json/platforms.json",
+  url: function() {
+    if (App.useJSON) {
+      return "json/platforms.json";
+    } else {
+      return "" + App.dbUrlBase + "/platforms/1/_source";
+    }
+  },
   initialize: function() {
     return this.fetch();
+  },
+  parse: function(response) {
+    return response.data;
   },
   forKey: function(type) {
     return _.first(this.where({
@@ -730,6 +739,8 @@ ProductsCollection = require('./app/collections/ProductsCollection.coffee');
 
 window.App = {
   readyToInitCount: 0,
+  dbUrlBase: "http://10.90.102.15:9200/tco",
+  useJSON: false,
   init: function() {
     var dataFromURL;
     dataFromURL = this.getDataFromURL();
@@ -782,8 +793,16 @@ window.App = {
   onInputPanelChange: function(data) {},
   onURLChange: function(data) {},
   loadCLCData: function() {
-    return $.getJSON("json/clc.json", (function(_this) {
-      return function(data) {
+    var clcDataURL;
+    if (this.useJSON) {
+      clcDataURL = "json/clc.json";
+    } else {
+      clcDataURL = "" + App.dbUrlBase + "/clc-pricing/1/_source";
+    }
+    return $.getJSON(clcDataURL, (function(_this) {
+      return function(response) {
+        var data;
+        data = response.data[0];
         _this.clcPricing = data.pricing;
         _this.clcBenchmarking = data.benchmarking;
         _this.readyToInitCount += 1;
