@@ -23,5 +23,5 @@ The project uses Middleman for compiling a static HTML site from Ruby and uses G
 
 ## Credits
 
-- Designed by Nathan Young at Tier 3 / nathan.young@centurylinkcloud.com
+- Designed by Nathan Young at CenturyLink Cloud / nathan.young@ctl.io
 - Developed by Matt Fordham at WINTR / matt@wintr.us
