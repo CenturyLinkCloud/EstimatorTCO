@@ -1,4 +1,4 @@
-# Tier 3 Estimator
+# CenturyLink Cloud Estimator
 
 ## Installation
 
