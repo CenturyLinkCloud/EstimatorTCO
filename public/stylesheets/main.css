@@ -261,7 +261,7 @@ input[type=text], input[type=number] {
   z-index: 100;
   color: white; }
   .green-section input[type=text] {
-    width: 50px !important; }
+    width: 50px; }
   .green-section form {
     margin-bottom: 0; }
   .green-section table {

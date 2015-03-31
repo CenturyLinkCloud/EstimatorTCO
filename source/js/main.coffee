@@ -8,6 +8,7 @@
 # Imports
 #--------------------------------------------------------
 
+Config = require './app/Config.coffee'
 PubSub = require './app/PubSub.coffee'
 Router = require './app/Router.coffee'
 InputPanelView = require './app/views/InputPanelView.coffee'
@@ -18,6 +19,10 @@ SettingsModel = require './app/models/SettingsModel.coffee'
 PlatformsCollection = require './app/collections/PlatformsCollection.coffee'
 ProductsCollection = require './app/collections/ProductsCollection.coffee'
 
+DEFAULT_PRICING = require './app/data/pricing.coffee'
+DEFAULT_BENCHMARKING = require './app/data/benchmarking.coffee'
+DEFAULT_PLATFORMS = require './app/data/platforms.coffee'
+PRICES_URL_ROOT = Config.CLC_PRICING_URL_ROOT
 
 #--------------------------------------------------------
 # Init
@@ -25,6 +30,7 @@ ProductsCollection = require './app/collections/ProductsCollection.coffee'
 
 window.App = 
   readyToInitCount: 0
+  clcBenchmarking: DEFAULT_BENCHMARKING
 
   init: ->
     dataFromURL = @getDataFromURL()
@@ -90,11 +96,46 @@ window.App =
   #--------------------------------------------------------
 
   loadCLCData: ->
-    $.getJSON "json/clc.json", (data) =>
-      @clcPricing = data.pricing
-      @clcBenchmarking = data.benchmarking
-      @readyToInitCount += 1
-      @buildUI()
+    $.ajax
+      type: "GET"
+      url: PRICES_URL_ROOT + "default.json"
+      success: (data) =>
+        @clcPricing = @parsePricingData(data)
+        return @onPricingSync()
+      error: (error) =>
+        console.error error
+        @clcPricing = DEFAULT_PRICING
+        return @onPricingSync()
+    return @
+
+  onPricingSync: ->
+    @readyToInitCount += 1
+    @buildUI()
+    return @
+
+  parsePricingData: (categories) ->
+    pricing = _.clone DEFAULT_PRICING
+    _.each categories,((category) ->
+      if category.products?
+        _.each category.products, (product) ->
+          if _.has(product,'key')
+            ids = product.key.split(":")
+            switch ids[0]
+              when 'server'
+                switch ids[1]
+                  when 'storage'
+                    pricing.standardStorage = product.hourly if ids[2] is 'standard'
+                    pricing.premiumStorage = product.hourly if ids[2] is 'premium'
+                  when 'os'
+                    pricing.windows = product.hourly if ids[2] is 'windows'
+                    pricing.redhat = product.hourly if ids[2] is 'redhat'
+                  else
+                    pricing.cpu = product.hourly if ids[1] is 'cpu'
+                    pricing.ram = product.hourly if ids[1] is 'memory'
+              when 'networking'
+                pricing.bandwidth = product.monthly if ids[1] is 'bandwidth'              
+    )
+    return pricing
 
 
   #--------------------------------------------------------
