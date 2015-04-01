@@ -141,8 +141,8 @@ window.App =
               when 'networking'
                 pricing.bandwidth = product.monthly if ids[1] is 'bandwidth'              
     )
-    _.each pricing, (price, key) =>
-      pricing[key] = price * @currency.rate
+    # _.each pricing, (price, key) =>
+    #   pricing[key] = price * @currency.rate
 
     return pricing
 
@@ -194,7 +194,10 @@ window.App =
           $option = $("<option value='#{currency.id}' #{selected}>#{currency.id}</option>")
           $currencySelect.append $option
         @currency = data["USD"][@currencyId]
-        return @init()
+        return setTimeout(=>
+          @init()
+        ,500)
+        
       error: (error) =>
         @currency = 
           rate: 1.0
@@ -204,7 +207,9 @@ window.App =
           selected = if currency.id is @currencyId then "selected" else ""
           $option = $("<option value='#{currency.id}' #{selected}>#{currency.id}</option>")
           $currencySelect.append $option
-        return @init()
+        return setTimeout(=>
+          @init()
+        ,500)
 
 
 #--------------------------------------------------------

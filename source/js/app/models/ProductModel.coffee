@@ -123,7 +123,7 @@ ProductModel = Backbone.Model.extend
 
   savings: ->
     if @settings.get("quantity") > 0
-      return Math.round((1 - @clcTotalPrice() / @platformTotalPrice()) * 100)
+      return Math.round((1 - (@clcTotalPrice()) / @platformTotalPrice()) * 100)
     else
       return 0
 

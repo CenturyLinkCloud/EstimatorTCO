@@ -63,38 +63,6 @@ PlatformCollection = Backbone.Collection.extend({
   initialize: function() {
     return this.fetch();
   },
-  parse: function(data) {
-    var platforms, rate;
-    rate = window.App.currency.rate;
-    console.log('before', data[0]);
-    platforms = _.clone(data);
-    _.each(platforms, function(platform, pindex) {
-      _.each(platform.additionalFeatures, (function(_this) {
-        return function(feature, index) {
-          return platform.additionalFeatures[index].pricing *= rate;
-        };
-      })(this));
-      _.each(platform.benchmarking, (function(_this) {
-        return function(price, key) {
-          return platform.benchmarking[key] *= rate;
-        };
-      })(this));
-      _.each(platform.pricing, (function(_this) {
-        return function(price, key) {
-          return platform.pricing[key] *= rate;
-        };
-      })(this));
-      return _.each(platform.products, (function(_this) {
-        return function(product, index) {
-          platform.products[index].price *= rate;
-          platform.products[index].redhat *= rate;
-          return platform.products[index].windows *= rate;
-        };
-      })(this));
-    });
-    console.log('after', platforms[0]);
-    return data;
-  },
   forKey: function(type) {
     return _.first(this.where({
       "type": type
@@ -424,7 +392,7 @@ ProductModel = Backbone.Model.extend({
   },
   savings: function() {
     if (this.settings.get("quantity") > 0) {
-      return Math.round((1 - this.clcTotalPrice() / this.platformTotalPrice()) * 100);
+      return Math.round((1 - (this.clcTotalPrice()) / this.platformTotalPrice()) * 100);
     } else {
       return 0;
     }
@@ -519,7 +487,7 @@ $c = function(text) {
 
 $o = [];
 
-$o.push("<td>" + ($e($c(this.model.clcEquivalentCpu()))) + "</td>\n<td>" + ($e($c(this.model.clcEquivalentRam()))) + "</td>\n<td>" + ($e($c(accounting.formatMoney(this.model.clcTotalPrice(), {
+$o.push("<td>" + ($e($c(this.model.clcEquivalentCpu()))) + "</td>\n<td>" + ($e($c(this.model.clcEquivalentRam()))) + "</td>\n<td>" + ($e($c(accounting.formatMoney(this.model.clcTotalPrice() * window.App.currency.rate, {
   precision: 3,
   symbol: this.app.currency.symbol
 })))) + "</td>");
@@ -552,7 +520,7 @@ $c = function(text) {
 
 $o = [];
 
-$o.push("<td class='left-align'>" + ($e($c(this.model.get("name")))) + "</td>\n<td>" + ($e($c(this.model.get("cpu")))) + "</td>\n<td>" + ($e($c(this.model.get("ram")))) + "</td>\n<td>" + ($e($c(accounting.formatMoney(this.model.platformTotalPrice(), {
+$o.push("<td class='left-align'>" + ($e($c(this.model.get("name")))) + "</td>\n<td>" + ($e($c(this.model.get("cpu")))) + "</td>\n<td>" + ($e($c(this.model.get("ram")))) + "</td>\n<td>" + ($e($c(accounting.formatMoney(this.model.platformTotalPrice() * window.App.currency.rate, {
   precision: 3,
   symbol: this.app.currency.symbol
 })))) + "</td>");
@@ -585,10 +553,10 @@ $c = function(text) {
 
 $o = [];
 
-$o.push("<td>" + ($e($c(accounting.formatMoney(this.model.variance(), {
+$o.push("<td>" + ($e($c(accounting.formatMoney(this.model.variance() * window.App.currency.rate, {
   precision: 3,
   symbol: this.app.currency.symbol
-})))) + "</td>\n<td>" + ($e($c(accounting.formatMoney(this.model.variance() * 8765.81, {
+})))) + "</td>\n<td>" + ($e($c(accounting.formatMoney(this.model.variance() * 8765.81 * window.App.currency.rate, {
   precision: 2,
   symbol: this.app.currency.symbol
 })))) + "</td>\n<td>" + ($e($c("" + (this.model.savings()) + "%"))) + "</td>");
@@ -1147,11 +1115,6 @@ window.App = {
         });
       }
     }));
-    _.each(pricing, (function(_this) {
-      return function(price, key) {
-        return pricing[key] = price * _this.currency.rate;
-      };
-    })(this));
     return pricing;
   },
   buildUI: function() {
@@ -1202,7 +1165,9 @@ window.App = {
             return $currencySelect.append($option);
           });
           _this.currency = data["USD"][_this.currencyId];
-          return _this.init();
+          return setTimeout(function() {
+            return _this.init();
+          }, 500);
         };
       })(this),
       error: (function(_this) {
@@ -1218,7 +1183,9 @@ window.App = {
             $option = $("<option value='" + currency.id + "' " + selected + ">" + currency.id + "</option>");
             return $currencySelect.append($option);
           });
-          return _this.init();
+          return setTimeout(function() {
+            return _this.init();
+          }, 500);
         };
       })(this)
     });
