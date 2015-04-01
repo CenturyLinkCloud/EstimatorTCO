@@ -9,6 +9,7 @@
 #--------------------------------------------------------
 
 Config = require './app/Config.coffee'
+Utils = require './app/Utils.coffee'
 PubSub = require './app/PubSub.coffee'
 Router = require './app/Router.coffee'
 InputPanelView = require './app/views/InputPanelView.coffee'
@@ -19,7 +20,7 @@ SettingsModel = require './app/models/SettingsModel.coffee'
 PlatformsCollection = require './app/collections/PlatformsCollection.coffee'
 ProductsCollection = require './app/collections/ProductsCollection.coffee'
 
-DEFAULT_PRICING = require './app/data/pricing.coffee'
+DEFAULT_PRICING = require './app/data/default-pricing-object.coffee'
 DEFAULT_BENCHMARKING = require './app/data/benchmarking.coffee'
 DEFAULT_PLATFORMS = require './app/data/platforms.coffee'
 PRICES_URL_ROOT = Config.CLC_PRICING_URL_ROOT
@@ -31,6 +32,10 @@ PRICES_URL_ROOT = Config.CLC_PRICING_URL_ROOT
 window.App = 
   readyToInitCount: 0
   clcBenchmarking: DEFAULT_BENCHMARKING
+  currency:
+    symbol: ""
+    rate: 1.0
+    id: "USD"
 
   init: ->
     dataFromURL = @getDataFromURL()
@@ -42,6 +47,7 @@ window.App =
     @productsCollection = new ProductsCollection()
 
     @loadCLCData()
+    
     @initEvents()
     
     @router = new Router()
@@ -135,6 +141,9 @@ window.App =
               when 'networking'
                 pricing.bandwidth = product.monthly if ids[1] is 'bandwidth'              
     )
+    _.each pricing, (price, key) =>
+      pricing[key] = price * @currency.rate
+
     return pricing
 
 
@@ -144,10 +153,16 @@ window.App =
 
   buildUI: ->
     return unless @readyToInitCount is 2
-    @platformProductsView = new PlatformProductsView()
-    @centuryLinkProductsView = new CenturyLinkProductsView()
-    @variancesView = new VariancesView()
-    @inputPanelView = new InputPanelView(model: @settingsModel, platforms: @platformsCollection)
+    @platformProductsView = new PlatformProductsView
+      app: @
+    @centuryLinkProductsView = new CenturyLinkProductsView
+      app: @
+    @variancesView = new VariancesView
+      app: @
+    @inputPanelView = new InputPanelView
+      model: @settingsModel
+      platforms: @platformsCollection
+      app: @
 
 
   #--------------------------------------------------------
@@ -165,9 +180,36 @@ window.App =
       return null
 
 
+  getCurrencyDataThenInit: ->
+    @currencyId = Utils.getUrlParameter("currency") || "USD"
+
+    $.ajax
+      url: "/prices/exchange-rates.json"
+      type: "GET"
+      success: (data) =>
+        $currencySelect = $("#currency-select")
+        $currencySelect.html('')
+        _.each data["USD"], (currency) =>
+          selected = if currency.id is @currencyId then "selected" else ""
+          $option = $("<option value='#{currency.id}' #{selected}>#{currency.id}</option>")
+          $currencySelect.append $option
+        @currency = data["USD"][@currencyId]
+        return @init()
+      error: (error) =>
+        @currency = 
+          rate: 1.0
+          id: "USD"
+          symbol: "$"
+        _.each data["USD"], (currency) =>
+          selected = if currency.id is @currencyId then "selected" else ""
+          $option = $("<option value='#{currency.id}' #{selected}>#{currency.id}</option>")
+          $currencySelect.append $option
+        return @init()
+
+
 #--------------------------------------------------------
 # DOM Ready
 #--------------------------------------------------------
 
 $ ->
-  App.init()
+  App.getCurrencyDataThenInit()

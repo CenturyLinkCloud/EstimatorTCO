@@ -7,6 +7,7 @@ VariancesView = Backbone.View.extend
   varianceViews: []
 
   initialize: (options) ->
+    @app = options.app || {}
     PubSub.on("inputPanel:change", @updateProducts, @)
 
   setCollection: (productsCollection) ->
@@ -16,7 +17,9 @@ VariancesView = Backbone.View.extend
     return unless @productsCollection
     @removeProducts()
     @productsCollection.each (product) =>
-      varianceView = new VarianceView model: product
+      varianceView = new VarianceView 
+        model: product
+        app: @app
       $("table", @$el).append varianceView.render().el
       @varianceViews.push varianceView
 

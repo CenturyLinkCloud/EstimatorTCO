@@ -7,6 +7,7 @@ PlatformProductsView = Backbone.View.extend
   productViews: []
 
   initialize: (options) ->
+    @app = options.app || {}
     PubSub.on("inputPanel:change", @updateProducts, @)
 
   setCollection: (productsCollection) ->
@@ -17,7 +18,9 @@ PlatformProductsView = Backbone.View.extend
 
     @removeProducts()
     @productsCollection.each (product) =>
-      productView = new PlatformProductView model: product
+      productView = new PlatformProductView 
+        model: product
+        app: @app
       $("table", @$el).append productView.render().el
       @productViews.push productView
 

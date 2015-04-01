@@ -31,17 +31,69 @@ module.exports = Router;
 
 
 },{"./PubSub.coffee":2}],4:[function(require,module,exports){
-var DEFAULT, PlatformCollection, PlatformModel;
+var Utils;
+
+Utils = {
+  getUrlParameter: function(sParam) {
+    var i, sPageURL, sParameterName, sURLVariables;
+    sPageURL = window.location.search.substring(1);
+    sURLVariables = sPageURL.split('&');
+    i = 0;
+    while (i < sURLVariables.length) {
+      sParameterName = sURLVariables[i].split('=');
+      if (sParameterName[0] === sParam) {
+        return sParameterName[1];
+      }
+      i++;
+    }
+  }
+};
+
+module.exports = Utils;
+
+
+},{}],5:[function(require,module,exports){
+var PlatformCollection, PlatformModel;
 
 PlatformModel = require('../models/PlatformModel.coffee');
-
-DEFAULT = require('../data/platforms.coffee');
 
 PlatformCollection = Backbone.Collection.extend({
   model: PlatformModel,
   url: "json/platforms.json",
   initialize: function() {
     return this.fetch();
+  },
+  parse: function(data) {
+    var platforms, rate;
+    rate = window.App.currency.rate;
+    console.log('before', data[0]);
+    platforms = _.clone(data);
+    _.each(platforms, function(platform, pindex) {
+      _.each(platform.additionalFeatures, (function(_this) {
+        return function(feature, index) {
+          return platform.additionalFeatures[index].pricing *= rate;
+        };
+      })(this));
+      _.each(platform.benchmarking, (function(_this) {
+        return function(price, key) {
+          return platform.benchmarking[key] *= rate;
+        };
+      })(this));
+      _.each(platform.pricing, (function(_this) {
+        return function(price, key) {
+          return platform.pricing[key] *= rate;
+        };
+      })(this));
+      return _.each(platform.products, (function(_this) {
+        return function(product, index) {
+          platform.products[index].price *= rate;
+          platform.products[index].redhat *= rate;
+          return platform.products[index].windows *= rate;
+        };
+      })(this));
+    });
+    console.log('after', platforms[0]);
+    return data;
   },
   forKey: function(type) {
     return _.first(this.where({
@@ -53,7 +105,7 @@ PlatformCollection = Backbone.Collection.extend({
 module.exports = PlatformCollection;
 
 
-},{"../data/platforms.coffee":7,"../models/PlatformModel.coffee":9}],5:[function(require,module,exports){
+},{"../models/PlatformModel.coffee":10}],6:[function(require,module,exports){
 var ProductCollection, ProductModel;
 
 ProductModel = require('../models/ProductModel.coffee');
@@ -66,13 +118,26 @@ ProductCollection = Backbone.Collection.extend({
 module.exports = ProductCollection;
 
 
-},{"../models/ProductModel.coffee":10}],6:[function(require,module,exports){
+},{"../models/ProductModel.coffee":11}],7:[function(require,module,exports){
 module.exports = {
   "iops": 611.74
 };
 
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
+module.exports = {
+  "cpu": 0.01,
+  "ram": 0.015,
+  "standardStorage": 0.000205338809034907,
+  "premiumStorage": 0.000547945,
+  "bandwidth": 0.05,
+  "windows": 0.04,
+  "redhat": 0.04,
+  "linux": 0
+};
+
+
+},{}],9:[function(require,module,exports){
 module.exports = [
   {
     "key": "aws",
@@ -225,30 +290,20 @@ module.exports = [
 ];
 
 
-},{}],8:[function(require,module,exports){
-module.exports = {
-  "cpu": 0.01,
-  "ram": 0.015,
-  "standardStorage": 0.000205338809034907,
-  "premiumStorage": 0.000547945,
-  "bandwidth": 0.05,
-  "windows": 0.04,
-  "redhat": 0.04,
-  "linux": 0
-};
-
-
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 var PlatformModel;
 
 PlatformModel = Backbone.Model.extend({
-  initialize: function() {}
+  initialize: function() {},
+  parse: function(data) {
+    return data;
+  }
 });
 
 module.exports = PlatformModel;
 
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 var ProductModel;
 
 ProductModel = Backbone.Model.extend({
@@ -379,7 +434,7 @@ ProductModel = Backbone.Model.extend({
 module.exports = ProductModel;
 
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 var SettingsModel;
 
 SettingsModel = Backbone.Model.extend({
@@ -393,7 +448,12 @@ SettingsModel = Backbone.Model.extend({
     matchCPU: false,
     matchIOPS: false,
     iops: 0,
-    additionalFeatures: []
+    additionalFeatures: [],
+    currency: {
+      symbol: "$",
+      id: "USD",
+      rate: 1.0
+    }
   },
   initialize: function() {}
 });
@@ -401,7 +461,7 @@ SettingsModel = Backbone.Model.extend({
 module.exports = SettingsModel;
 
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 module.exports = function(options) {
 return (function() {
 var $c, $e, $o;
@@ -435,38 +495,6 @@ return $o.join("\n").replace(/\s(\w+)='true'/mg, ' $1').replace(/\s(\w+)='fa
 
 }).call(options)
 };
-},{}],13:[function(require,module,exports){
-module.exports = function(options) {
-return (function() {
-var $c, $e, $o;
-
-$e = function(text, escape) {
-  return ("" + text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/'/g, '&#39;').replace(/\//g, '&#47;').replace(/"/g, '&quot;');
-};
-
-$c = function(text) {
-  switch (text) {
-    case null:
-    case void 0:
-      return '';
-    case true:
-    case false:
-      return '' + text;
-    default:
-      return text;
-  }
-};
-
-$o = [];
-
-$o.push("<td>" + ($e($c(this.model.clcEquivalentCpu()))) + "</td>\n<td>" + ($e($c(this.model.clcEquivalentRam()))) + "</td>\n<td>" + ($e($c(accounting.formatMoney(this.model.clcTotalPrice(), {
-  precision: 3
-})))) + "</td>");
-
-return $o.join("\n").replace(/\s(\w+)='true'/mg, ' $1').replace(/\s(\w+)='false'/mg, '');
-
-}).call(options)
-};
 },{}],14:[function(require,module,exports){
 module.exports = function(options) {
 return (function() {
@@ -491,11 +519,12 @@ $c = function(text) {
 
 $o = [];
 
-$o.push("<td class='left-align'>" + ($e($c(this.model.get("name")))) + "</td>\n<td>" + ($e($c(this.model.get("cpu")))) + "</td>\n<td>" + ($e($c(this.model.get("ram")))) + "</td>\n<td>" + ($e($c(accounting.formatMoney(this.model.platformTotalPrice(), {
-  precision: 3
+$o.push("<td>" + ($e($c(this.model.clcEquivalentCpu()))) + "</td>\n<td>" + ($e($c(this.model.clcEquivalentRam()))) + "</td>\n<td>" + ($e($c(accounting.formatMoney(this.model.clcTotalPrice(), {
+  precision: 3,
+  symbol: this.app.currency.symbol
 })))) + "</td>");
 
-return $o.join("\n").replace(/\s(\w+)='true'/mg, ' $1').replace(/\s(\w+)='false'/mg, '').replace(/\s(?:id|class)=(['"])(\1)/mg, "");
+return $o.join("\n").replace(/\s(\w+)='true'/mg, ' $1').replace(/\s(\w+)='false'/mg, '');
 
 }).call(options)
 };
@@ -523,17 +552,52 @@ $c = function(text) {
 
 $o = [];
 
+$o.push("<td class='left-align'>" + ($e($c(this.model.get("name")))) + "</td>\n<td>" + ($e($c(this.model.get("cpu")))) + "</td>\n<td>" + ($e($c(this.model.get("ram")))) + "</td>\n<td>" + ($e($c(accounting.formatMoney(this.model.platformTotalPrice(), {
+  precision: 3,
+  symbol: this.app.currency.symbol
+})))) + "</td>");
+
+return $o.join("\n").replace(/\s(\w+)='true'/mg, ' $1').replace(/\s(\w+)='false'/mg, '').replace(/\s(?:id|class)=(['"])(\1)/mg, "");
+
+}).call(options)
+};
+},{}],16:[function(require,module,exports){
+module.exports = function(options) {
+return (function() {
+var $c, $e, $o;
+
+$e = function(text, escape) {
+  return ("" + text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/'/g, '&#39;').replace(/\//g, '&#47;').replace(/"/g, '&quot;');
+};
+
+$c = function(text) {
+  switch (text) {
+    case null:
+    case void 0:
+      return '';
+    case true:
+    case false:
+      return '' + text;
+    default:
+      return text;
+  }
+};
+
+$o = [];
+
 $o.push("<td>" + ($e($c(accounting.formatMoney(this.model.variance(), {
-  precision: 3
+  precision: 3,
+  symbol: this.app.currency.symbol
 })))) + "</td>\n<td>" + ($e($c(accounting.formatMoney(this.model.variance() * 8765.81, {
-  precision: 2
+  precision: 2,
+  symbol: this.app.currency.symbol
 })))) + "</td>\n<td>" + ($e($c("" + (this.model.savings()) + "%"))) + "</td>");
 
 return $o.join("\n").replace(/\s(\w+)='true'/mg, ' $1').replace(/\s(\w+)='false'/mg, '');
 
 }).call(options)
 };
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 var AdditionalFeatureView;
 
 AdditionalFeatureView = Backbone.View.extend({
@@ -553,18 +617,21 @@ AdditionalFeatureView = Backbone.View.extend({
 module.exports = AdditionalFeatureView;
 
 
-},{"../templates/additionalFeature.haml":12}],17:[function(require,module,exports){
+},{"../templates/additionalFeature.haml":13}],18:[function(require,module,exports){
 var CenturyLinkProductView;
 
 CenturyLinkProductView = Backbone.View.extend({
   tagName: "tr",
   className: "product",
-  initialize: function(options) {},
+  initialize: function(options) {
+    return this.app = options.app || {};
+  },
   render: function() {
     var template;
     template = require("../templates/centuryLinkProduct.haml");
     this.$el.html(template({
-      model: this.model
+      model: this.model,
+      app: this.app
     }));
     return this;
   }
@@ -573,7 +640,7 @@ CenturyLinkProductView = Backbone.View.extend({
 module.exports = CenturyLinkProductView;
 
 
-},{"../templates/centuryLinkProduct.haml":13}],18:[function(require,module,exports){
+},{"../templates/centuryLinkProduct.haml":14}],19:[function(require,module,exports){
 var CenturyLinkProductView, CenturyLinkProductsView, PubSub;
 
 PubSub = require('../PubSub.coffee');
@@ -584,6 +651,7 @@ CenturyLinkProductsView = Backbone.View.extend({
   el: "#century-link-products-table",
   productViews: [],
   initialize: function(options) {
+    this.app = options.app || {};
     return PubSub.on("inputPanel:change", this.updateProducts, this);
   },
   setCollection: function(productsCollection) {
@@ -603,7 +671,8 @@ CenturyLinkProductsView = Backbone.View.extend({
       return function(product) {
         var productView;
         productView = new CenturyLinkProductView({
-          model: product
+          model: product,
+          app: _this.app
         });
         $("table", _this.$el).append(productView.render().el);
         return _this.productViews.push(productView);
@@ -622,7 +691,7 @@ CenturyLinkProductsView = Backbone.View.extend({
 module.exports = CenturyLinkProductsView;
 
 
-},{"../PubSub.coffee":2,"../views/CenturyLinkProductView.coffee":17}],19:[function(require,module,exports){
+},{"../PubSub.coffee":2,"../views/CenturyLinkProductView.coffee":18}],20:[function(require,module,exports){
 var AdditionalFeatureView, InputPanelView, PubSub, SettingsModel;
 
 PubSub = require('../PubSub.coffee');
@@ -634,7 +703,8 @@ AdditionalFeatureView = require('./AdditionalFeatureView.coffee');
 InputPanelView = Backbone.View.extend({
   el: "#input-panel",
   events: {
-    "change .platform-select": "onPlatformChanged",
+    "change #platform-select": "onPlatformChanged",
+    "change #currency-select": "onCurrencyChanged",
     "keypress .number": "ensureNumber",
     "change select": "onFormChanged",
     "keyup input": "onFormChanged",
@@ -644,6 +714,7 @@ InputPanelView = Backbone.View.extend({
   },
   initialize: function(options) {
     this.options = options || {};
+    this.app = options.app || {};
     this.listenTo(this.model, 'change', this.render);
     this.render();
     this.initPlatforms();
@@ -673,6 +744,17 @@ InputPanelView = Backbone.View.extend({
       platformKey: platformKey
     });
     return this.buildPlatformAdditionalFeatures();
+  },
+  onCurrencyChanged: function() {
+    var currencyKey, href;
+    currencyKey = $("#currency-select", this.$el).val();
+    PubSub.trigger("currency:change", {
+      currencyKey: currencyKey
+    });
+    href = window.top.location.href;
+    href = href.replace(/\?currency=.*/, "");
+    href = "" + href + "?currency=" + currencyKey;
+    return window.top.location.href = href;
   },
   onFormChanged: function() {
     var data;
@@ -759,18 +841,21 @@ InputPanelView = Backbone.View.extend({
 module.exports = InputPanelView;
 
 
-},{"../PubSub.coffee":2,"../models/SettingsModel.coffee":11,"./AdditionalFeatureView.coffee":16}],20:[function(require,module,exports){
+},{"../PubSub.coffee":2,"../models/SettingsModel.coffee":12,"./AdditionalFeatureView.coffee":17}],21:[function(require,module,exports){
 var PlatformProductView;
 
 PlatformProductView = Backbone.View.extend({
   tagName: "tr",
   className: "product",
-  initialize: function(options) {},
+  initialize: function(options) {
+    return this.app = options.app || {};
+  },
   render: function() {
     var template;
     template = require("../templates/platformProduct.haml");
     this.$el.html(template({
-      model: this.model
+      model: this.model,
+      app: this.app
     }));
     return this;
   }
@@ -779,7 +864,7 @@ PlatformProductView = Backbone.View.extend({
 module.exports = PlatformProductView;
 
 
-},{"../templates/platformProduct.haml":14}],21:[function(require,module,exports){
+},{"../templates/platformProduct.haml":15}],22:[function(require,module,exports){
 var PlatformProductView, PlatformProductsView, PubSub;
 
 PubSub = require('../PubSub.coffee');
@@ -790,6 +875,7 @@ PlatformProductsView = Backbone.View.extend({
   el: "#platform-products-table",
   productViews: [],
   initialize: function(options) {
+    this.app = options.app || {};
     return PubSub.on("inputPanel:change", this.updateProducts, this);
   },
   setCollection: function(productsCollection) {
@@ -804,7 +890,8 @@ PlatformProductsView = Backbone.View.extend({
       return function(product) {
         var productView;
         productView = new PlatformProductView({
-          model: product
+          model: product,
+          app: _this.app
         });
         $("table", _this.$el).append(productView.render().el);
         return _this.productViews.push(productView);
@@ -823,18 +910,21 @@ PlatformProductsView = Backbone.View.extend({
 module.exports = PlatformProductsView;
 
 
-},{"../PubSub.coffee":2,"../views/PlatformProductView.coffee":20}],22:[function(require,module,exports){
+},{"../PubSub.coffee":2,"../views/PlatformProductView.coffee":21}],23:[function(require,module,exports){
 var VarianceView;
 
 VarianceView = Backbone.View.extend({
   tagName: "tr",
   className: "variance",
-  initialize: function(options) {},
+  initialize: function(options) {
+    return this.app = options.app || {};
+  },
   render: function() {
     var template;
     template = require("../templates/variance.haml");
     this.$el.html(template({
-      model: this.model
+      model: this.model,
+      app: this.app
     }));
     if (this.model.savings() > 0) {
       this.$el.addClass("green");
@@ -848,7 +938,7 @@ VarianceView = Backbone.View.extend({
 module.exports = VarianceView;
 
 
-},{"../templates/variance.haml":15}],23:[function(require,module,exports){
+},{"../templates/variance.haml":16}],24:[function(require,module,exports){
 var PubSub, VarianceView, VariancesView;
 
 PubSub = require('../PubSub.coffee');
@@ -859,6 +949,7 @@ VariancesView = Backbone.View.extend({
   el: "#variances-table",
   varianceViews: [],
   initialize: function(options) {
+    this.app = options.app || {};
     return PubSub.on("inputPanel:change", this.updateProducts, this);
   },
   setCollection: function(productsCollection) {
@@ -873,7 +964,8 @@ VariancesView = Backbone.View.extend({
       return function(product) {
         var varianceView;
         varianceView = new VarianceView({
-          model: product
+          model: product,
+          app: _this.app
         });
         $("table", _this.$el).append(varianceView.render().el);
         return _this.varianceViews.push(varianceView);
@@ -892,10 +984,12 @@ VariancesView = Backbone.View.extend({
 module.exports = VariancesView;
 
 
-},{"../PubSub.coffee":2,"../views/VarianceView.coffee":22}],24:[function(require,module,exports){
-var CenturyLinkProductsView, Config, DEFAULT_BENCHMARKING, DEFAULT_PLATFORMS, DEFAULT_PRICING, InputPanelView, PRICES_URL_ROOT, PlatformProductsView, PlatformsCollection, ProductsCollection, PubSub, Router, SettingsModel, VariancesView;
+},{"../PubSub.coffee":2,"../views/VarianceView.coffee":23}],25:[function(require,module,exports){
+var CenturyLinkProductsView, Config, DEFAULT_BENCHMARKING, DEFAULT_PLATFORMS, DEFAULT_PRICING, InputPanelView, PRICES_URL_ROOT, PlatformProductsView, PlatformsCollection, ProductsCollection, PubSub, Router, SettingsModel, Utils, VariancesView;
 
 Config = require('./app/Config.coffee');
+
+Utils = require('./app/Utils.coffee');
 
 PubSub = require('./app/PubSub.coffee');
 
@@ -915,7 +1009,7 @@ PlatformsCollection = require('./app/collections/PlatformsCollection.coffee');
 
 ProductsCollection = require('./app/collections/ProductsCollection.coffee');
 
-DEFAULT_PRICING = require('./app/data/pricing.coffee');
+DEFAULT_PRICING = require('./app/data/default-pricing-object.coffee');
 
 DEFAULT_BENCHMARKING = require('./app/data/benchmarking.coffee');
 
@@ -926,6 +1020,11 @@ PRICES_URL_ROOT = Config.CLC_PRICING_URL_ROOT;
 window.App = {
   readyToInitCount: 0,
   clcBenchmarking: DEFAULT_BENCHMARKING,
+  currency: {
+    symbol: "",
+    rate: 1.0,
+    id: "USD"
+  },
   init: function() {
     var dataFromURL;
     dataFromURL = this.getDataFromURL();
@@ -1048,18 +1147,30 @@ window.App = {
         });
       }
     }));
+    _.each(pricing, (function(_this) {
+      return function(price, key) {
+        return pricing[key] = price * _this.currency.rate;
+      };
+    })(this));
     return pricing;
   },
   buildUI: function() {
     if (this.readyToInitCount !== 2) {
       return;
     }
-    this.platformProductsView = new PlatformProductsView();
-    this.centuryLinkProductsView = new CenturyLinkProductsView();
-    this.variancesView = new VariancesView();
+    this.platformProductsView = new PlatformProductsView({
+      app: this
+    });
+    this.centuryLinkProductsView = new CenturyLinkProductsView({
+      app: this
+    });
+    this.variancesView = new VariancesView({
+      app: this
+    });
     return this.inputPanelView = new InputPanelView({
       model: this.settingsModel,
-      platforms: this.platformsCollection
+      platforms: this.platformsCollection,
+      app: this
     });
   },
   getDataFromURL: function() {
@@ -1073,12 +1184,50 @@ window.App = {
     } else {
       return null;
     }
+  },
+  getCurrencyDataThenInit: function() {
+    this.currencyId = Utils.getUrlParameter("currency") || "USD";
+    return $.ajax({
+      url: "/prices/exchange-rates.json",
+      type: "GET",
+      success: (function(_this) {
+        return function(data) {
+          var $currencySelect;
+          $currencySelect = $("#currency-select");
+          $currencySelect.html('');
+          _.each(data["USD"], function(currency) {
+            var $option, selected;
+            selected = currency.id === _this.currencyId ? "selected" : "";
+            $option = $("<option value='" + currency.id + "' " + selected + ">" + currency.id + "</option>");
+            return $currencySelect.append($option);
+          });
+          _this.currency = data["USD"][_this.currencyId];
+          return _this.init();
+        };
+      })(this),
+      error: (function(_this) {
+        return function(error) {
+          _this.currency = {
+            rate: 1.0,
+            id: "USD",
+            symbol: "$"
+          };
+          _.each(data["USD"], function(currency) {
+            var $option, selected;
+            selected = currency.id === _this.currencyId ? "selected" : "";
+            $option = $("<option value='" + currency.id + "' " + selected + ">" + currency.id + "</option>");
+            return $currencySelect.append($option);
+          });
+          return _this.init();
+        };
+      })(this)
+    });
   }
 };
 
 $(function() {
-  return App.init();
+  return App.getCurrencyDataThenInit();
 });
 
 
-},{"./app/Config.coffee":1,"./app/PubSub.coffee":2,"./app/Router.coffee":3,"./app/collections/PlatformsCollection.coffee":4,"./app/collections/ProductsCollection.coffee":5,"./app/data/benchmarking.coffee":6,"./app/data/platforms.coffee":7,"./app/data/pricing.coffee":8,"./app/models/SettingsModel.coffee":11,"./app/views/CenturyLinkProductsView.coffee":18,"./app/views/InputPanelView.coffee":19,"./app/views/PlatformProductsView.coffee":21,"./app/views/VariancesView.coffee":23}]},{},[24])
+},{"./app/Config.coffee":1,"./app/PubSub.coffee":2,"./app/Router.coffee":3,"./app/Utils.coffee":4,"./app/collections/PlatformsCollection.coffee":5,"./app/collections/ProductsCollection.coffee":6,"./app/data/benchmarking.coffee":7,"./app/data/default-pricing-object.coffee":8,"./app/data/platforms.coffee":9,"./app/models/SettingsModel.coffee":12,"./app/views/CenturyLinkProductsView.coffee":19,"./app/views/InputPanelView.coffee":20,"./app/views/PlatformProductsView.coffee":22,"./app/views/VariancesView.coffee":24}]},{},[25])

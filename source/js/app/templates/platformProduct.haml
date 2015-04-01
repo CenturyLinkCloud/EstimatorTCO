@@ -1,4 +1,4 @@
 %td.left-align= @model.get("name")
 %td= @model.get("cpu")
 %td= @model.get("ram")
-%td= accounting.formatMoney(@model.platformTotalPrice(), {precision: 3})
+%td= accounting.formatMoney(@model.platformTotalPrice(), {precision: 3, symbol: @app.currency.symbol})

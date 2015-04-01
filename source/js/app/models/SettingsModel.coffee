@@ -11,6 +11,10 @@ SettingsModel = Backbone.Model.extend
     matchIOPS: false
     iops: 0
     additionalFeatures: []
+    currency:
+        symbol: "$"
+        id: "USD"
+        rate: 1.0
 
   initialize: ->
 

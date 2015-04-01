@@ -4,10 +4,10 @@ CenturyLinkProductView = Backbone.View.extend
   className: "product"
 
   initialize: (options) ->
-
+    @app = options.app || {}
   render: ->
     template = require "../templates/centuryLinkProduct.haml"
-    @$el.html template(model: @model)
+    @$el.html template(model: @model, app: @app)
     return @
 
 module.exports = CenturyLinkProductView

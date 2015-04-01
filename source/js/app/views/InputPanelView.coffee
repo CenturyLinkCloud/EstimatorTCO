@@ -7,7 +7,8 @@ InputPanelView = Backbone.View.extend
   el: "#input-panel"
 
   events:
-    "change .platform-select": "onPlatformChanged"
+    "change #platform-select": "onPlatformChanged"
+    "change #currency-select": "onCurrencyChanged"
     "keypress .number": "ensureNumber"
     "change select": "onFormChanged"
     "keyup input": "onFormChanged"
@@ -17,6 +18,7 @@ InputPanelView = Backbone.View.extend
 
   initialize: (options) ->
     @options = options || {}
+    @app = options.app || {}
 
     @.listenTo @model, 'change', @render
     # @.listenTo @model, 'change', @onFormChanged
@@ -36,10 +38,21 @@ InputPanelView = Backbone.View.extend
       else
         $("input[name=#{key}]", @$el).val(value)
 
+
+
   onPlatformChanged: ->
     platformKey = $("#platform-select", @$el).val()
     PubSub.trigger "platform:change", platformKey: platformKey
     @buildPlatformAdditionalFeatures()
+
+  onCurrencyChanged: ->
+    currencyKey = $("#currency-select", @$el).val()
+    PubSub.trigger "currency:change", currencyKey: currencyKey
+    #FOR NOW
+    href = window.top.location.href
+    href = href.replace(/\?currency=.*/, "")
+    href = "#{href}?currency=#{currencyKey}"
+    return window.top.location.href = href
 
   onFormChanged: ->
     data = Backbone.Syphon.serialize @
