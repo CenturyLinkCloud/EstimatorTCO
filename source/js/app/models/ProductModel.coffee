@@ -58,7 +58,7 @@ ProductModel = Backbone.Model.extend
     total = subtotal
     
     # AWS Specific extras
-    if App.platform.get("key") is "aws"
+    if App.platform.get("key") is "aws" or App.platform.get("key") is "azure"
 
       # MCM
       if @settings.get("mcm")

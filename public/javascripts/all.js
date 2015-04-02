@@ -181,7 +181,7 @@ ProductModel = Backbone.Model.extend({
       subtotal = (this.get("price") + this.platformBandwidthPrice() + this.platformIOPSPrice() + this.platformStoragePrice() + this.platformSnapshotPrice() + this.platformStorageIORequests() + this.platformOSPrice()) * this.settings.get("quantity");
     }
     total = subtotal;
-    if (App.platform.get("key") === "aws") {
+    if (App.platform.get("key") === "aws" || App.platform.get("key") === "azure") {
       if (this.settings.get("mcm")) {
         total += _.findWhere(this.platformAdditionalFeatures, {
           "key": "mcm"
