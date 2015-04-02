@@ -1,11 +1,11 @@
 SettingsModel = Backbone.Model.extend
     
   defaults:
-    platform: "aws"
+    platform: "azure"
     quantity: 1
-    os: "linux"
-    storage: 100
-    bandwidth: 1000
+    os: "windows"
+    storage: 215
+    bandwidth: 200
     snapshots: 5
     matchCPU: false
     matchIOPS: false

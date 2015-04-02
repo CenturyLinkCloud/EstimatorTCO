@@ -41,17 +41,23 @@ ProductModel = Backbone.Model.extend
       return 0
 
   platformOSPrice: ->
-    if @settings.get("os") is "linux"
-      return 0
-    else
-      return @.get(@settings.get("os"))
+    if App.platform.get("key") is "aws"
+      if @settings.get("os") is "linux"
+        return @.get("price")
+      else
+        return @.get(@settings.get("os")) + @.get("price")
+    else if App.platform.get("key") is "azure"
+      if @settings.get("os") is "linux"
+        return @.get("price")
+      else
+        return @.get(@settings.get("os"))
 
   platformTotalPrice: ->
     if @settings.get("iops") > 0
-      subtotal = (@.get("price") + @platformBandwidthPrice() + @platformIOPSPrice() + 
+      subtotal = (@platformBandwidthPrice() + @platformIOPSPrice() + 
                   @platformSnapshotPrice() + @platformOSPrice()) * @settings.get("quantity")
     else
-      subtotal = (@.get("price") + @platformBandwidthPrice() + @platformIOPSPrice() + 
+      subtotal = (@platformBandwidthPrice() + @platformIOPSPrice() + 
                   @platformStoragePrice() + @platformSnapshotPrice() + @platformStorageIORequests() + 
                   @platformOSPrice()) * @settings.get("quantity")
 

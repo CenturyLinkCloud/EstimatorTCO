@@ -167,18 +167,26 @@ ProductModel = Backbone.Model.extend({
     }
   },
   platformOSPrice: function() {
-    if (this.settings.get("os") === "linux") {
-      return 0;
-    } else {
-      return this.get(this.settings.get("os"));
+    if (App.platform.get("key") === "aws") {
+      if (this.settings.get("os") === "linux") {
+        return this.get("price");
+      } else {
+        return this.get(this.settings.get("os")) + this.get("price");
+      }
+    } else if (App.platform.get("key") === "azure") {
+      if (this.settings.get("os") === "linux") {
+        return this.get("price");
+      } else {
+        return this.get(this.settings.get("os"));
+      }
     }
   },
   platformTotalPrice: function() {
     var perRCU, subtotal, total;
     if (this.settings.get("iops") > 0) {
-      subtotal = (this.get("price") + this.platformBandwidthPrice() + this.platformIOPSPrice() + this.platformSnapshotPrice() + this.platformOSPrice()) * this.settings.get("quantity");
+      subtotal = (this.platformBandwidthPrice() + this.platformIOPSPrice() + this.platformSnapshotPrice() + this.platformOSPrice()) * this.settings.get("quantity");
     } else {
-      subtotal = (this.get("price") + this.platformBandwidthPrice() + this.platformIOPSPrice() + this.platformStoragePrice() + this.platformSnapshotPrice() + this.platformStorageIORequests() + this.platformOSPrice()) * this.settings.get("quantity");
+      subtotal = (this.platformBandwidthPrice() + this.platformIOPSPrice() + this.platformStoragePrice() + this.platformSnapshotPrice() + this.platformStorageIORequests() + this.platformOSPrice()) * this.settings.get("quantity");
     }
     total = subtotal;
     if (App.platform.get("key") === "aws" || App.platform.get("key") === "azure") {
@@ -261,11 +269,11 @@ var SettingsModel;
 
 SettingsModel = Backbone.Model.extend({
   defaults: {
-    platform: "aws",
+    platform: "azure",
     quantity: 1,
-    os: "linux",
-    storage: 100,
-    bandwidth: 1000,
+    os: "windows",
+    storage: 215,
+    bandwidth: 200,
     snapshots: 5,
     matchCPU: false,
     matchIOPS: false,
