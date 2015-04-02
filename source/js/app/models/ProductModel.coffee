@@ -35,7 +35,7 @@ ProductModel = Backbone.Model.extend
     iops = (@settings.get("iops") * @platformPricing.provisionedIOPSPerMonth) / @HOURS_PER_MONTH
     ebs = (215 * @platformPricing.provisionedPerGB) / @HOURS_PER_MONTH
     if @settings.get("iops") > 0
-      console.log iops, ebs
+      # console.log iops, ebs
       return iops + ebs
     else 
       return 0
@@ -110,9 +110,9 @@ ProductModel = Backbone.Model.extend
   clcOSPrice: ->
     App.clcPricing[@settings.get("os")] * @clcEquivalentCpu()
 
-  clcTotalPrice: ->
-    (@clcRamPrice() + @clcCpuPrice() + @clcDiskPrice() + @clcBandwidthPrice() + @clcOSPrice()) * @settings.get("quantity")
-
+  clcTotalPrice: ->      
+    total = (@clcRamPrice() + @clcCpuPrice() + @clcDiskPrice() + @clcBandwidthPrice() + @clcOSPrice()) * @settings.get("quantity")
+    return total
 
   #--------------------------------------------------------
   # Variance

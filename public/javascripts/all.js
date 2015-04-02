@@ -2,8 +2,14 @@
 var Config;
 
 Config = {
-  NAME: "matt",
-  CLC_PRICING_URL_ROOT: "/prices/"
+  NAME: "TCO Estimator",
+  CLC_PRICING_URL_ROOT: "./prices/",
+  DEFAULT_CURRENCY: {
+    id: "USD",
+    rate: 1.0,
+    symbol: "$"
+  },
+  CURRENCY_FILE_PATH: "./currency/exchange-rates.json"
 };
 
 module.exports = Config;
@@ -73,7 +79,7 @@ PlatformCollection = Backbone.Collection.extend({
 module.exports = PlatformCollection;
 
 
-},{"../models/PlatformModel.coffee":10}],6:[function(require,module,exports){
+},{"../models/PlatformModel.coffee":9}],6:[function(require,module,exports){
 var ProductCollection, ProductModel;
 
 ProductModel = require('../models/ProductModel.coffee');
@@ -86,7 +92,7 @@ ProductCollection = Backbone.Collection.extend({
 module.exports = ProductCollection;
 
 
-},{"../models/ProductModel.coffee":11}],7:[function(require,module,exports){
+},{"../models/ProductModel.coffee":10}],7:[function(require,module,exports){
 module.exports = {
   "iops": 611.74
 };
@@ -96,8 +102,8 @@ module.exports = {
 module.exports = {
   "cpu": 0.01,
   "ram": 0.015,
-  "standardStorage": 0.000205338809034907,
-  "premiumStorage": 0.000547945,
+  "standardStorage": 0.0002,
+  "premiumStorage": 0.0007,
   "bandwidth": 0.05,
   "windows": 0.04,
   "redhat": 0.04,
@@ -106,159 +112,6 @@ module.exports = {
 
 
 },{}],9:[function(require,module,exports){
-module.exports = [
-  {
-    "key": "aws",
-    "name": "AWS",
-    "pricing": {
-      "standardPerGB": 0.05,
-      "perMillionRequests": 0.05,
-      "provisionedPerGB": 0.125,
-      "provisionedIOPSPerMonth": 0.10,
-      "firstSnapshot": 0.7,
-      "remainingSnapshotsEach": 0.03,
-      "snapshotPerGB": 0.095,
-      "bandwidthOutbound": 0.1
-    },
-    "benchmarking": {
-      "cpu": 1.524886878,
-      "ram": 0.992
-    },
-    "additionalFeatures": [
-      {
-        "key": "mcm",
-        "name": "Cloud Manager",
-        "pricing": 0.02
-      }, {
-        "key": "rightScale",
-        "name": "RightScale",
-        "pricing": 0.08
-      }, {
-        "key": "alertLogic",
-        "name": "AlertLogic",
-        "pricing": 0.58
-      }
-    ],
-    "products": [
-      {
-        "name": "r3.large",
-        "cpu": 2,
-        "ram": 15,
-        "price": 0.175,
-        "windows": 0.125,
-        "redhat": 0.060,
-        "rightScaleRCU": 2
-      }, {
-        "name": "r3.xlarge",
-        "cpu": 4,
-        "ram": 30.5,
-        "price": 0.350,
-        "windows": 0.250,
-        "redhat": 0.060,
-        "rightScaleRCU": 4
-      }, {
-        "name": "r3.2 Xlarge",
-        "cpu": 8,
-        "ram": 61,
-        "price": 0.7,
-        "windows": 0.380,
-        "redhat": 0.130,
-        "rightScaleRCU": 8
-      }, {
-        "name": "r3.4 Xlarge",
-        "cpu": 16,
-        "ram": 122,
-        "price": 1.4,
-        "windows": 0.544,
-        "redhat": 0.130,
-        "rightScaleRCU": 16
-      }, {
-        "name": "r3.8 Xlarge",
-        "cpu": 32,
-        "ram": 244,
-        "price": 2.8,
-        "windows": 0.700,
-        "redhat": 0.130,
-        "rightScaleRCU": 16
-      }, {
-        "name": "m3.medium",
-        "cpu": 1,
-        "ram": 3.7,
-        "price": 0.07,
-        "windows": 0.063,
-        "redhat": 0.060,
-        "rightScaleRCU": 1
-      }, {
-        "name": "m3.large",
-        "cpu": 2,
-        "ram": 7.5,
-        "price": 0.14,
-        "windows": 0.126,
-        "redhat": 0.060,
-        "rightScaleRCU": 2
-      }, {
-        "name": "m3.xlarge",
-        "cpu": 4,
-        "ram": 15,
-        "price": 0.28,
-        "windows": 0.252,
-        "redhat": 0.060,
-        "rightScaleRCU": 4
-      }, {
-        "name": "m3.2xlarge",
-        "cpu": 8,
-        "ram": 30,
-        "price": 0.56,
-        "windows": 0.504,
-        "redhat": 0.130,
-        "rightScaleRCU": 8
-      }, {
-        "name": "c3.large",
-        "cpu": 2,
-        "ram": 3.7,
-        "price": 0.105,
-        "windows": 0.083,
-        "redhat": 0.060,
-        "rightScaleRCU": 1
-      }, {
-        "name": "c3.xlarge",
-        "cpu": 4,
-        "ram": 7,
-        "price": 0.21,
-        "windows": 0.166,
-        "redhat": 0.060,
-        "rightScaleRCU": 2
-      }, {
-        "name": "c3.2xlarge",
-        "cpu": 8,
-        "ram": 15,
-        "price": 0.42,
-        "windows": 0.332,
-        "redhat": 0.130,
-        "rightScaleRCU": 4
-      }, {
-        "name": "c3.4xlarge",
-        "cpu": 16,
-        "ram": 30,
-        "price": 0.84,
-        "windows": 0.664,
-        "redhat": 0.130,
-        "rightScaleRCU": 8
-      }, {
-        "name": "c3.8xlarge",
-        "cpu": 32,
-        "ram": 60,
-        "price": 1.680,
-        "windows": 1.328,
-        "redhat": 0.130,
-        "rightScaleRCU": 16
-      }
-    ]
-  }
-];
-
-
-},{}],10:[function(require,module,exports){
 var PlatformModel;
 
 PlatformModel = Backbone.Model.extend({
@@ -271,7 +124,7 @@ PlatformModel = Backbone.Model.extend({
 module.exports = PlatformModel;
 
 
-},{}],11:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 var ProductModel;
 
 ProductModel = Backbone.Model.extend({
@@ -308,7 +161,6 @@ ProductModel = Backbone.Model.extend({
     iops = (this.settings.get("iops") * this.platformPricing.provisionedIOPSPerMonth) / this.HOURS_PER_MONTH;
     ebs = (215 * this.platformPricing.provisionedPerGB) / this.HOURS_PER_MONTH;
     if (this.settings.get("iops") > 0) {
-      console.log(iops, ebs);
       return iops + ebs;
     } else {
       return 0;
@@ -385,7 +237,9 @@ ProductModel = Backbone.Model.extend({
     return App.clcPricing[this.settings.get("os")] * this.clcEquivalentCpu();
   },
   clcTotalPrice: function() {
-    return (this.clcRamPrice() + this.clcCpuPrice() + this.clcDiskPrice() + this.clcBandwidthPrice() + this.clcOSPrice()) * this.settings.get("quantity");
+    var total;
+    total = (this.clcRamPrice() + this.clcCpuPrice() + this.clcDiskPrice() + this.clcBandwidthPrice() + this.clcOSPrice()) * this.settings.get("quantity");
+    return total;
   },
   variance: function() {
     return this.platformTotalPrice() - this.clcTotalPrice();
@@ -402,7 +256,7 @@ ProductModel = Backbone.Model.extend({
 module.exports = ProductModel;
 
 
-},{}],12:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 var SettingsModel;
 
 SettingsModel = Backbone.Model.extend({
@@ -429,7 +283,7 @@ SettingsModel = Backbone.Model.extend({
 module.exports = SettingsModel;
 
 
-},{}],13:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 module.exports = function(options) {
 return (function() {
 var $c, $e, $o;
@@ -463,7 +317,7 @@ return $o.join("\n").replace(/\s(\w+)='true'/mg, ' $1').replace(/\s(\w+)='fa
 
 }).call(options)
 };
-},{}],14:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 module.exports = function(options) {
 return (function() {
 var $c, $e, $o;
@@ -496,7 +350,7 @@ return $o.join("\n").replace(/\s(\w+)='true'/mg, ' $1').replace(/\s(\w+)='fa
 
 }).call(options)
 };
-},{}],15:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 module.exports = function(options) {
 return (function() {
 var $c, $e, $o;
@@ -529,7 +383,7 @@ return $o.join("\n").replace(/\s(\w+)='true'/mg, ' $1').replace(/\s(\w+)='fa
 
 }).call(options)
 };
-},{}],16:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 module.exports = function(options) {
 return (function() {
 var $c, $e, $o;
@@ -565,7 +419,7 @@ return $o.join("\n").replace(/\s(\w+)='true'/mg, ' $1').replace(/\s(\w+)='fa
 
 }).call(options)
 };
-},{}],17:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 var AdditionalFeatureView;
 
 AdditionalFeatureView = Backbone.View.extend({
@@ -585,7 +439,7 @@ AdditionalFeatureView = Backbone.View.extend({
 module.exports = AdditionalFeatureView;
 
 
-},{"../templates/additionalFeature.haml":13}],18:[function(require,module,exports){
+},{"../templates/additionalFeature.haml":12}],17:[function(require,module,exports){
 var CenturyLinkProductView;
 
 CenturyLinkProductView = Backbone.View.extend({
@@ -608,7 +462,7 @@ CenturyLinkProductView = Backbone.View.extend({
 module.exports = CenturyLinkProductView;
 
 
-},{"../templates/centuryLinkProduct.haml":14}],19:[function(require,module,exports){
+},{"../templates/centuryLinkProduct.haml":13}],18:[function(require,module,exports){
 var CenturyLinkProductView, CenturyLinkProductsView, PubSub;
 
 PubSub = require('../PubSub.coffee');
@@ -659,7 +513,7 @@ CenturyLinkProductsView = Backbone.View.extend({
 module.exports = CenturyLinkProductsView;
 
 
-},{"../PubSub.coffee":2,"../views/CenturyLinkProductView.coffee":18}],20:[function(require,module,exports){
+},{"../PubSub.coffee":2,"../views/CenturyLinkProductView.coffee":17}],19:[function(require,module,exports){
 var AdditionalFeatureView, InputPanelView, PubSub, SettingsModel;
 
 PubSub = require('../PubSub.coffee');
@@ -809,7 +663,7 @@ InputPanelView = Backbone.View.extend({
 module.exports = InputPanelView;
 
 
-},{"../PubSub.coffee":2,"../models/SettingsModel.coffee":12,"./AdditionalFeatureView.coffee":17}],21:[function(require,module,exports){
+},{"../PubSub.coffee":2,"../models/SettingsModel.coffee":11,"./AdditionalFeatureView.coffee":16}],20:[function(require,module,exports){
 var PlatformProductView;
 
 PlatformProductView = Backbone.View.extend({
@@ -832,7 +686,7 @@ PlatformProductView = Backbone.View.extend({
 module.exports = PlatformProductView;
 
 
-},{"../templates/platformProduct.haml":15}],22:[function(require,module,exports){
+},{"../templates/platformProduct.haml":14}],21:[function(require,module,exports){
 var PlatformProductView, PlatformProductsView, PubSub;
 
 PubSub = require('../PubSub.coffee');
@@ -878,7 +732,7 @@ PlatformProductsView = Backbone.View.extend({
 module.exports = PlatformProductsView;
 
 
-},{"../PubSub.coffee":2,"../views/PlatformProductView.coffee":21}],23:[function(require,module,exports){
+},{"../PubSub.coffee":2,"../views/PlatformProductView.coffee":20}],22:[function(require,module,exports){
 var VarianceView;
 
 VarianceView = Backbone.View.extend({
@@ -906,7 +760,7 @@ VarianceView = Backbone.View.extend({
 module.exports = VarianceView;
 
 
-},{"../templates/variance.haml":16}],24:[function(require,module,exports){
+},{"../templates/variance.haml":15}],23:[function(require,module,exports){
 var PubSub, VarianceView, VariancesView;
 
 PubSub = require('../PubSub.coffee');
@@ -952,8 +806,8 @@ VariancesView = Backbone.View.extend({
 module.exports = VariancesView;
 
 
-},{"../PubSub.coffee":2,"../views/VarianceView.coffee":23}],25:[function(require,module,exports){
-var CenturyLinkProductsView, Config, DEFAULT_BENCHMARKING, DEFAULT_PLATFORMS, DEFAULT_PRICING, InputPanelView, PRICES_URL_ROOT, PlatformProductsView, PlatformsCollection, ProductsCollection, PubSub, Router, SettingsModel, Utils, VariancesView;
+},{"../PubSub.coffee":2,"../views/VarianceView.coffee":22}],24:[function(require,module,exports){
+var CenturyLinkProductsView, Config, DEFAULT_BENCHMARKING, DEFAULT_PRICING, InputPanelView, PRICES_URL_ROOT, PlatformProductsView, PlatformsCollection, ProductsCollection, PubSub, Router, SettingsModel, Utils, VariancesView;
 
 Config = require('./app/Config.coffee');
 
@@ -980,8 +834,6 @@ ProductsCollection = require('./app/collections/ProductsCollection.coffee');
 DEFAULT_PRICING = require('./app/data/default-pricing-object.coffee');
 
 DEFAULT_BENCHMARKING = require('./app/data/benchmarking.coffee');
-
-DEFAULT_PLATFORMS = require('./app/data/platforms.coffee');
 
 PRICES_URL_ROOT = Config.CLC_PRICING_URL_ROOT;
 
@@ -1151,7 +1003,7 @@ window.App = {
   getCurrencyDataThenInit: function() {
     this.currencyId = Utils.getUrlParameter("currency") || "USD";
     return $.ajax({
-      url: "/prices/exchange-rates.json",
+      url: Config.CURRENCY_FILE_PATH,
       type: "GET",
       success: (function(_this) {
         return function(data) {
@@ -1197,4 +1049,4 @@ $(function() {
 });
 
 
-},{"./app/Config.coffee":1,"./app/PubSub.coffee":2,"./app/Router.coffee":3,"./app/Utils.coffee":4,"./app/collections/PlatformsCollection.coffee":5,"./app/collections/ProductsCollection.coffee":6,"./app/data/benchmarking.coffee":7,"./app/data/default-pricing-object.coffee":8,"./app/data/platforms.coffee":9,"./app/models/SettingsModel.coffee":12,"./app/views/CenturyLinkProductsView.coffee":19,"./app/views/InputPanelView.coffee":20,"./app/views/PlatformProductsView.coffee":22,"./app/views/VariancesView.coffee":24}]},{},[25])
+},{"./app/Config.coffee":1,"./app/PubSub.coffee":2,"./app/Router.coffee":3,"./app/Utils.coffee":4,"./app/collections/PlatformsCollection.coffee":5,"./app/collections/ProductsCollection.coffee":6,"./app/data/benchmarking.coffee":7,"./app/data/default-pricing-object.coffee":8,"./app/models/SettingsModel.coffee":11,"./app/views/CenturyLinkProductsView.coffee":18,"./app/views/InputPanelView.coffee":19,"./app/views/PlatformProductsView.coffee":21,"./app/views/VariancesView.coffee":23}]},{},[24])

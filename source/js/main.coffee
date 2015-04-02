@@ -22,7 +22,6 @@ ProductsCollection = require './app/collections/ProductsCollection.coffee'
 
 DEFAULT_PRICING = require './app/data/default-pricing-object.coffee'
 DEFAULT_BENCHMARKING = require './app/data/benchmarking.coffee'
-DEFAULT_PLATFORMS = require './app/data/platforms.coffee'
 PRICES_URL_ROOT = Config.CLC_PRICING_URL_ROOT
 
 #--------------------------------------------------------
@@ -141,8 +140,6 @@ window.App =
               when 'networking'
                 pricing.bandwidth = product.monthly if ids[1] is 'bandwidth'              
     )
-    # _.each pricing, (price, key) =>
-    #   pricing[key] = price * @currency.rate
 
     return pricing
 
@@ -184,7 +181,7 @@ window.App =
     @currencyId = Utils.getUrlParameter("currency") || "USD"
 
     $.ajax
-      url: "/prices/exchange-rates.json"
+      url: Config.CURRENCY_FILE_PATH
       type: "GET"
       success: (data) =>
         $currencySelect = $("#currency-select")

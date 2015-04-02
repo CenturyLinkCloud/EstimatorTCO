@@ -3,14 +3,14 @@
     "key": "aws",
     "name": "AWS",
     "pricing": {
-      "standardPerGB": 0.05,
-      "perMillionRequests": 0.05,
+      "standardPerGB": 0.1,
+      "perMillionRequests": 0.00,
       "provisionedPerGB": 0.125,
-      "provisionedIOPSPerMonth": 0.10,
+      "provisionedIOPSPerMonth": 0.065,
       "firstSnapshot": 0.7,
       "remainingSnapshotsEach": 0.03,
       "snapshotPerGB": 0.095,
-      "bandwidthOutbound": 0.1
+      "bandwidthOutbound": 0.09
     },
     "benchmarking": {
       "cpu": 1.524886878,
@@ -20,7 +20,7 @@
       {
         "key": "mcm",
         "name": "Cloud Manager",
-        "pricing": 0.02
+        "pricing": 0.00
       },
       {
         "key": "rightScale",
