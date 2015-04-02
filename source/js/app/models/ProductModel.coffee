@@ -55,13 +55,13 @@ ProductModel = Backbone.Model.extend
   platformTotalPrice: ->
     if @settings.get("iops") > 0
       subtotal = (@platformBandwidthPrice() + @platformIOPSPrice() + 
-                  @platformSnapshotPrice() + @platformOSPrice()) * @settings.get("quantity")
+                  @platformSnapshotPrice() + @platformOSPrice())
     else
       subtotal = (@platformBandwidthPrice() + @platformIOPSPrice() + 
                   @platformStoragePrice() + @platformSnapshotPrice() + @platformStorageIORequests() + 
-                  @platformOSPrice()) * @settings.get("quantity")
+                  @platformOSPrice())
 
-    total = subtotal
+    total = subtotal * @settings.get("quantity")
     
     # AWS Specific extras
     if App.platform.get("key") is "aws" or App.platform.get("key") is "azure"
@@ -113,11 +113,18 @@ ProductModel = Backbone.Model.extend
   clcBandwidthPrice: ->
     @settings.get("bandwidth") * App.clcPricing.bandwidth / @HOURS_PER_MONTH
 
+  clcLoadBalancingPrice: ->
+    loadBalancePrice = 0.0
+    if @settings.get("platform") is "azure"
+      if @settings.get("loadBalancing") is true
+        loadBalancePrice = App.clcBenchmarking.azure.loadBalancing
+    return loadBalancePrice
+
   clcOSPrice: ->
     App.clcPricing[@settings.get("os")] * @clcEquivalentCpu()
 
   clcTotalPrice: ->      
-    total = (@clcRamPrice() + @clcCpuPrice() + @clcDiskPrice() + @clcBandwidthPrice() + @clcOSPrice()) * @settings.get("quantity")
+    total = (@clcRamPrice() + @clcCpuPrice() + @clcDiskPrice() + @clcBandwidthPrice() + @clcOSPrice() + @clcLoadBalancingPrice()) * @settings.get("quantity")
     return total
 
   #--------------------------------------------------------

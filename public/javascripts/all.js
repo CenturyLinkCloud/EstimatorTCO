@@ -94,7 +94,10 @@ module.exports = ProductCollection;
 
 },{"../models/ProductModel.coffee":10}],7:[function(require,module,exports){
 module.exports = {
-  "iops": 611.74
+  "iops": 611.74,
+  "azure": {
+    "loadBalancing": 0.04
+  }
 };
 
 
@@ -184,11 +187,11 @@ ProductModel = Backbone.Model.extend({
   platformTotalPrice: function() {
     var perRCU, subtotal, total;
     if (this.settings.get("iops") > 0) {
-      subtotal = (this.platformBandwidthPrice() + this.platformIOPSPrice() + this.platformSnapshotPrice() + this.platformOSPrice()) * this.settings.get("quantity");
+      subtotal = this.platformBandwidthPrice() + this.platformIOPSPrice() + this.platformSnapshotPrice() + this.platformOSPrice();
     } else {
-      subtotal = (this.platformBandwidthPrice() + this.platformIOPSPrice() + this.platformStoragePrice() + this.platformSnapshotPrice() + this.platformStorageIORequests() + this.platformOSPrice()) * this.settings.get("quantity");
+      subtotal = this.platformBandwidthPrice() + this.platformIOPSPrice() + this.platformStoragePrice() + this.platformSnapshotPrice() + this.platformStorageIORequests() + this.platformOSPrice();
     }
-    total = subtotal;
+    total = subtotal * this.settings.get("quantity");
     if (App.platform.get("key") === "aws" || App.platform.get("key") === "azure") {
       if (this.settings.get("mcm")) {
         total += _.findWhere(this.platformAdditionalFeatures, {
@@ -241,12 +244,22 @@ ProductModel = Backbone.Model.extend({
   clcBandwidthPrice: function() {
     return this.settings.get("bandwidth") * App.clcPricing.bandwidth / this.HOURS_PER_MONTH;
   },
+  clcLoadBalancingPrice: function() {
+    var loadBalancePrice;
+    loadBalancePrice = 0.0;
+    if (this.settings.get("platform") === "azure") {
+      if (this.settings.get("loadBalancing") === true) {
+        loadBalancePrice = App.clcBenchmarking.azure.loadBalancing;
+      }
+    }
+    return loadBalancePrice;
+  },
   clcOSPrice: function() {
     return App.clcPricing[this.settings.get("os")] * this.clcEquivalentCpu();
   },
   clcTotalPrice: function() {
     var total;
-    total = (this.clcRamPrice() + this.clcCpuPrice() + this.clcDiskPrice() + this.clcBandwidthPrice() + this.clcOSPrice()) * this.settings.get("quantity");
+    total = (this.clcRamPrice() + this.clcCpuPrice() + this.clcDiskPrice() + this.clcBandwidthPrice() + this.clcOSPrice() + this.clcLoadBalancingPrice()) * this.settings.get("quantity");
     return total;
   },
   variance: function() {
@@ -269,14 +282,16 @@ var SettingsModel;
 
 SettingsModel = Backbone.Model.extend({
   defaults: {
-    platform: "azure",
+    platform: "aws",
     quantity: 1,
     os: "windows",
-    storage: 215,
-    bandwidth: 200,
+    storage: 100,
+    bandwidth: 1000,
     snapshots: 5,
     matchCPU: false,
     matchIOPS: false,
+    loadBalancing: false,
+    serviceTier: "standard",
     iops: 0,
     additionalFeatures: [],
     currency: {
@@ -557,9 +572,9 @@ InputPanelView = Backbone.View.extend({
     _results = [];
     for (key in _ref) {
       value = _ref[key];
-      if (key === "os" || key === "snapshots") {
+      if (key === "os" || key === "snapshots" || key === "serviceTier") {
         _results.push($("option[value=" + value + "]", this.$el).attr("selected", "selected"));
-      } else if (key === "matchIOPS" || key === "matchCPU") {
+      } else if (key === "matchIOPS" || key === "matchCPU" || key === "loadBalancing") {
         _results.push($("input[name=" + key + "]", this.$el).attr("checked", value));
       } else {
         _results.push($("input[name=" + key + "]", this.$el).val(value));
@@ -570,6 +585,16 @@ InputPanelView = Backbone.View.extend({
   onPlatformChanged: function() {
     var platformKey;
     platformKey = $("#platform-select", this.$el).val();
+    if (platformKey === 'azure') {
+      $(".load-balancing", this.$el).show();
+      $("span.platform-name").text("Azure");
+    }
+    if (platformKey === 'aws') {
+      $(".load-balancing", this.$el).hide();
+      $("span.platform-name").text("AWS");
+    }
+    $('.platform-image').hide();
+    $(".platform-image." + platformKey).show();
     PubSub.trigger("platform:change", {
       platformKey: platformKey
     });

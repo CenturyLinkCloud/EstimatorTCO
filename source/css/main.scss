@@ -68,6 +68,10 @@ input[type=text], input[type=number] {
   }
 }
 
+.page-title {
+  background: transparent;
+}
+
 .page-form {
   position: relative;
   margin-top: 0;
@@ -216,7 +220,7 @@ input[type=text], input[type=number] {
 
 .tooltip {
   width: 200px;
-  z-index: 19;
+  z-index: 190;
 }
 
 .rangeslider {
@@ -353,7 +357,7 @@ input[type=text], input[type=number] {
 .green-section {
   width: 100%;
   background: #00853f;
-  padding: 20px;
+  padding: 80px 20px 20px;
   overflow: hidden;
   z-index: 100;
   
@@ -563,6 +567,7 @@ input[type=text], input[type=number] {
 
     img {
       display: inline-block;
+      max-height: 51px;
     }
 
   }

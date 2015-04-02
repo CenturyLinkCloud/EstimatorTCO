@@ -14,6 +14,10 @@
         %tr
           %th{style: "width: 75px;"} # of VMs
           %th Operating System
+          %th.load-balancing{style: "display:none;"} 
+            Azure VM Service Tier
+            .tooltip-wrapper
+              %a.has-tooltip{href:"#", data: {toggle: "tooltip", title: "Vertical auto-scaling is a standard feature included in CenturyLink Cloud services whereas horizontal auto-scaling is included in Azure Standard tier virtual machine service.  Auto-scaling is not available in Azure's Basic tier virtual machine service."}}
           %th{style: "width: 235px;"} 
             Persistent Storage (EBS)
             .tooltip-wrapper
@@ -30,12 +34,12 @@
             Match CPU/RAM Performance 
             .tooltip-wrapper
               %a.has-tooltip{href:"#", data: {toggle: "tooltip", title: "Match CenturyLink VM Performance vs competitors based on CloudHarmony.com benchmarks."}}
-          %th 
-            Match IOPS Performance 
+          %th.load-balancing{style: "display: none;"} 
+            Load Balancing
             .tooltip-wrapper
-              %a.has-tooltip{href:"#", data: {toggle: "tooltip", title: "Match CenturyLink VM IOPS performance vs competitors based on CloudHarmony.com benchmarks."}}
-          %th{style: "width: 280px;"} IOPS Manual Entry
-          %th Provisioned IOPS
+              %a.has-tooltip{href:"#", data: {toggle: "tooltip", title: "Load balancing is included in Azure's Standard tier virtual machine service but is not available for the Basic service tier. Load balancing is a bolt-on feature for CenturyLink Cloud."}}
+          %th.iops{style: "width: 280px;"} IOPS Manual Entry
+          %th.iops Provisioned IOPS
         %tr
           %td{style: "width: 65px;"}
             %input.number{value: "", name: "quantity", type:"text"}
@@ -44,6 +48,10 @@
               %option{value: "linux"} Linux
               %option{value: "windows"} Windows
               %option{value: "redhat"} Red Hat
+          %td.load-balancing{style: "display:none;"}
+            %select{name: "tier"}
+              %option{value: "standard", selected: "selected" } Standard
+              %option{value: "basic"} Basic
           %td 
             %input.number{name: "storage", value: "", type:"text"}
             (GB)
@@ -56,16 +64,20 @@
               %option 14
           %td 
             %input{type: "checkbox", name: "matchCPU"}
-          %td 
+          %td.load-balancing{style: "display: none;"} 
+            %input{type: "checkbox", name: "loadBalancing"}
+          %td.iops 
             %input{type: "checkbox", name: "matchIOPS"}
-          %td 
+          %td.iops 
             %input.number{name: "manual-iops", type:"text"}
-          %td
-            %span.provisioned-iops 
+          %td.iops
+            %span.provisioned-iops
             %input.number{type: "hidden", name: "iops", type:"text"}
 
       .additional-features
-        %h4 AWS Add-Ons (equivalent features built-in CenturyLink Cloud)
+        %h4 
+          %span.platform-name AWS 
+          Add-Ons (equivalent features built-in CenturyLink Cloud)
 
 %section#share-panel.share-section
   .container.share
@@ -86,7 +98,10 @@
 
     #platform-products-table.results-table{style: "width: 340px"}
       .results-table__header{style: "width: 340px"}
-        = image_tag "aws-logo.png"
+        %div.platform-image.aws
+          = image_tag "aws-logo.png"
+        %div.platform-image.azure{style: "display: none;"}
+          = image_tag "azure-logo.png"
       %table
         %tr
           %th.left-align Service

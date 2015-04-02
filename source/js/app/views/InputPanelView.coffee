@@ -31,17 +31,25 @@ InputPanelView = Backbone.View.extend
    
   render: ->
     for key, value of @model.attributes
-      if key is "os" or key is "snapshots"
+      if key is "os" or key is "snapshots" or key is "serviceTier"
         $("option[value=#{value}]", @$el).attr("selected", "selected")
-      else if key is "matchIOPS" or key is "matchCPU"
+      else if key is "matchIOPS" or key is "matchCPU" or key is "loadBalancing"
         $("input[name=#{key}]", @$el).attr("checked", value)
       else
         $("input[name=#{key}]", @$el).val(value)
 
-
-
   onPlatformChanged: ->
+
     platformKey = $("#platform-select", @$el).val()
+    if platformKey is 'azure'
+      $(".load-balancing", @$el).show()
+      $("span.platform-name").text("Azure")
+    if platformKey is 'aws'
+      $(".load-balancing", @$el).hide()
+      $("span.platform-name").text("AWS")
+
+    $('.platform-image').hide()
+    $(".platform-image.#{platformKey}").show()
     PubSub.trigger "platform:change", platformKey: platformKey
     @buildPlatformAdditionalFeatures()
 

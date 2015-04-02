@@ -46,6 +46,9 @@ input[type=text], input[type=number] {
   -webkit-transition: opacity 300ms;
   transition: opacity 300ms; }
 
+.page-title {
+  background: transparent; }
+
 .page-form {
   position: relative;
   margin-top: 0; }
@@ -162,7 +165,7 @@ input[type=text], input[type=number] {
 
 .tooltip {
   width: 200px;
-  z-index: 19; }
+  z-index: 190; }
 
 .rangeslider {
   display: inline-block;
@@ -256,7 +259,7 @@ input[type=text], input[type=number] {
 .green-section {
   width: 100%;
   background: #00853f;
-  padding: 20px;
+  padding: 80px 20px 20px;
   overflow: hidden;
   z-index: 100;
   color: white; }
@@ -395,7 +398,8 @@ input[type=text], input[type=number] {
       margin-top: 10px;
       margin-bottom: -5px; }
     .results-table .results-table__header img {
-      display: inline-block; }
+      display: inline-block;
+      max-height: 51px; }
   .results-table.results-table--variance .results-table__header {
     background: #11853F;
     color: white;
