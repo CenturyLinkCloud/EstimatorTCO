@@ -1,4 +1,16 @@
-%td.left-align= @model.get("name")
-%td= @model.get("cpu")
-%td= @model.get("ram")
-%td= accounting.formatMoney(@model.platformTotalPrice() * window.App.currency.rate, {precision: 3, symbol: @app.currency.symbol})
+
+- if @model.isPlatformAvailable()
+  %td.left-align= @model.get("name")
+  %td= @model.get("cpu")
+  %td= @model.get("ram")
+  %td= accounting.formatMoney(@model.platformTotalPrice() * window.App.currency.rate, {precision: 3, symbol: @app.currency.symbol})
+- else
+  %td.left-align
+    = @model.get("name")
+    .tooltip-wrapper
+      %a.has-tooltip{href:"#", data: {toggle: "tooltip", title: "Based on Instance Configuration specific above; Azure Instances A5 through A9 are unavailable with Basic tier virtual machine service.", placement: "right"}}
+  %td N/A
+  %td N/A
+  %td N/A
+
+  

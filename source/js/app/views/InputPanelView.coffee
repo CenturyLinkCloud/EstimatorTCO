@@ -9,6 +9,7 @@ InputPanelView = Backbone.View.extend
   events:
     "change #platform-select": "onPlatformChanged"
     "change #currency-select": "onCurrencyChanged"
+    "change [name='pricingTier']": "onFormChanged"
     "keypress .number": "ensureNumber"
     "change select": "onFormChanged"
     "keyup input": "onFormChanged"
@@ -27,11 +28,14 @@ InputPanelView = Backbone.View.extend
     @initPlatforms()
     @onPlatformChanged()
 
-    $('.has-tooltip', @$el).tooltip()
+    $('.has-tooltip', @$el).on('click', (e) ->
+      e.preventDefault()
+      return false
+    ).tooltip()
    
   render: ->
     for key, value of @model.attributes
-      if key is "os" or key is "snapshots" or key is "serviceTier"
+      if key is "os" or key is "snapshots" or key is "pricingTier"
         $("option[value=#{value}]", @$el).attr("selected", "selected")
       else if key is "matchIOPS" or key is "matchCPU" or key is "loadBalancing"
         $("input[name=#{key}]", @$el).attr("checked", value)
@@ -42,11 +46,17 @@ InputPanelView = Backbone.View.extend
 
     platformKey = $("#platform-select", @$el).val()
     if platformKey is 'azure'
+      $(".iops", @$el).hide()
       $(".load-balancing", @$el).show()
+      $(".pricing-tier", @$el).show()
       $("span.platform-name").text("Azure")
+      $("option[value='redhat']").attr("disabled", "disabled")
     if platformKey is 'aws'
+      $(".iops", @$el).show()
+      $(".pricing-tier", @$el).hide()
       $(".load-balancing", @$el).hide()
       $("span.platform-name").text("AWS")
+      $("option[value='redhat']").removeAttr("disabled")
 
     $('.platform-image').hide()
     $(".platform-image.#{platformKey}").show()
@@ -62,6 +72,8 @@ InputPanelView = Backbone.View.extend
     href = "#{href}?currency=#{currencyKey}"
     return window.top.location.href = href
 
+  # onPricingTierChanged: (e) ->
+  #   console.log e.target
   onFormChanged: ->
     data = Backbone.Syphon.serialize @
     data = @updateIOPS(data)

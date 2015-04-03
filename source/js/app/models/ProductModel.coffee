@@ -46,11 +46,24 @@ ProductModel = Backbone.Model.extend
         return @.get("price")
       else
         return @.get(@settings.get("os")) + @.get("price")
+
     else if App.platform.get("key") is "azure"
-      if @settings.get("os") is "linux"
-        return @.get("price")
+      tier = @settings.get("pricingTier")
+      os = @settings.get("os")
+      pricing = @.get('pricing')[tier]
+      price = pricing[os]
+      return pricing[os]
+
+  isPlatformAvailable: ->
+    if App.platform.get("key") is "aws"
+      return true
+    else if App.platform.get("key") is "azure"
+      if @platformOSPrice() is 'Unavailable' or @platformOSPrice() is 0
+        return false
       else
-        return @.get(@settings.get("os"))
+        return true
+    else
+      return true
 
   platformTotalPrice: ->
     if @settings.get("iops") > 0
@@ -78,6 +91,9 @@ ProductModel = Backbone.Model.extend
       if @settings.get("rightScale")
         perRCU = _.findWhere( @platformAdditionalFeatures, {"key": "rightScale"}).pricing
         total += @.get("rightScaleRCU") * perRCU
+
+    if @platformOSPrice() is 'Unavailable' or @platformOSPrice() is 0
+      total = 0
 
     return total
 
@@ -125,6 +141,8 @@ ProductModel = Backbone.Model.extend
 
   clcTotalPrice: ->      
     total = (@clcRamPrice() + @clcCpuPrice() + @clcDiskPrice() + @clcBandwidthPrice() + @clcOSPrice() + @clcLoadBalancingPrice()) * @settings.get("quantity")
+    if @platformOSPrice() is 'Unavailable' or @platformOSPrice() is 0
+      total = 0
     return total
 
   #--------------------------------------------------------
@@ -135,10 +153,13 @@ ProductModel = Backbone.Model.extend
     @platformTotalPrice() - @clcTotalPrice()
 
   savings: ->
-    if @settings.get("quantity") > 0
-      return Math.round((1 - (@clcTotalPrice()) / @platformTotalPrice()) * 100)
-    else
+    if @platformOSPrice() is 'Unavailable' or @platformOSPrice() is 0
       return 0
+    else
+      if @settings.get("quantity") > 0
+        return Math.round((1 - (@clcTotalPrice()) / @platformTotalPrice()) * 100)
+      else
+        return 0
 
 
 module.exports = ProductModel

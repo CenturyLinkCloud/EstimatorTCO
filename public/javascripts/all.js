@@ -170,6 +170,7 @@ ProductModel = Backbone.Model.extend({
     }
   },
   platformOSPrice: function() {
+    var os, price, pricing, tier;
     if (App.platform.get("key") === "aws") {
       if (this.settings.get("os") === "linux") {
         return this.get("price");
@@ -177,11 +178,24 @@ ProductModel = Backbone.Model.extend({
         return this.get(this.settings.get("os")) + this.get("price");
       }
     } else if (App.platform.get("key") === "azure") {
-      if (this.settings.get("os") === "linux") {
-        return this.get("price");
+      tier = this.settings.get("pricingTier");
+      os = this.settings.get("os");
+      pricing = this.get('pricing')[tier];
+      price = pricing[os];
+      return pricing[os];
+    }
+  },
+  isPlatformAvailable: function() {
+    if (App.platform.get("key") === "aws") {
+      return true;
+    } else if (App.platform.get("key") === "azure") {
+      if (this.platformOSPrice() === 'Unavailable' || this.platformOSPrice() === 0) {
+        return false;
       } else {
-        return this.get(this.settings.get("os"));
+        return true;
       }
+    } else {
+      return true;
     }
   },
   platformTotalPrice: function() {
@@ -209,6 +223,9 @@ ProductModel = Backbone.Model.extend({
         }).pricing;
         total += this.get("rightScaleRCU") * perRCU;
       }
+    }
+    if (this.platformOSPrice() === 'Unavailable' || this.platformOSPrice() === 0) {
+      total = 0;
     }
     return total;
   },
@@ -260,16 +277,23 @@ ProductModel = Backbone.Model.extend({
   clcTotalPrice: function() {
     var total;
     total = (this.clcRamPrice() + this.clcCpuPrice() + this.clcDiskPrice() + this.clcBandwidthPrice() + this.clcOSPrice() + this.clcLoadBalancingPrice()) * this.settings.get("quantity");
+    if (this.platformOSPrice() === 'Unavailable' || this.platformOSPrice() === 0) {
+      total = 0;
+    }
     return total;
   },
   variance: function() {
     return this.platformTotalPrice() - this.clcTotalPrice();
   },
   savings: function() {
-    if (this.settings.get("quantity") > 0) {
-      return Math.round((1 - (this.clcTotalPrice()) / this.platformTotalPrice()) * 100);
-    } else {
+    if (this.platformOSPrice() === 'Unavailable' || this.platformOSPrice() === 0) {
       return 0;
+    } else {
+      if (this.settings.get("quantity") > 0) {
+        return Math.round((1 - (this.clcTotalPrice()) / this.platformTotalPrice()) * 100);
+      } else {
+        return 0;
+      }
     }
   }
 });
@@ -284,14 +308,14 @@ SettingsModel = Backbone.Model.extend({
   defaults: {
     platform: "aws",
     quantity: 1,
-    os: "windows",
+    os: "linux",
     storage: 100,
     bandwidth: 1000,
     snapshots: 5,
     matchCPU: false,
     matchIOPS: false,
     loadBalancing: false,
-    serviceTier: "standard",
+    pricingTier: "standard",
     iops: 0,
     additionalFeatures: [],
     currency: {
@@ -364,10 +388,14 @@ $c = function(text) {
 
 $o = [];
 
-$o.push("<td>" + ($e($c(this.model.clcEquivalentCpu()))) + "</td>\n<td>" + ($e($c(this.model.clcEquivalentRam()))) + "</td>\n<td>" + ($e($c(accounting.formatMoney(this.model.clcTotalPrice() * window.App.currency.rate, {
-  precision: 3,
-  symbol: this.app.currency.symbol
-})))) + "</td>");
+if (this.model.isPlatformAvailable()) {
+  $o.push("<td>" + ($e($c(this.model.clcEquivalentCpu()))) + "</td>\n<td>" + ($e($c(this.model.clcEquivalentRam()))) + "</td>\n<td>" + ($e($c(accounting.formatMoney(this.model.clcTotalPrice() * window.App.currency.rate, {
+    precision: 3,
+    symbol: this.app.currency.symbol
+  })))) + "</td>");
+} else {
+  $o.push("<td>N/A</td>\n<td>N/A</td>\n<td>N/A</td>");
+}
 
 return $o.join("\n").replace(/\s(\w+)='true'/mg, ' $1').replace(/\s(\w+)='false'/mg, '');
 
@@ -397,10 +425,16 @@ $c = function(text) {
 
 $o = [];
 
-$o.push("<td class='left-align'>" + ($e($c(this.model.get("name")))) + "</td>\n<td>" + ($e($c(this.model.get("cpu")))) + "</td>\n<td>" + ($e($c(this.model.get("ram")))) + "</td>\n<td>" + ($e($c(accounting.formatMoney(this.model.platformTotalPrice() * window.App.currency.rate, {
-  precision: 3,
-  symbol: this.app.currency.symbol
-})))) + "</td>");
+if (this.model.isPlatformAvailable()) {
+  $o.push("<td class='left-align'>" + ($e($c(this.model.get("name")))) + "</td>\n<td>" + ($e($c(this.model.get("cpu")))) + "</td>\n<td>" + ($e($c(this.model.get("ram")))) + "</td>\n<td>" + ($e($c(accounting.formatMoney(this.model.platformTotalPrice() * window.App.currency.rate, {
+    precision: 3,
+    symbol: this.app.currency.symbol
+  })))) + "</td>");
+} else {
+  $o.push("<td class='left-align'>");
+  $o.push("  " + $e($c(this.model.get("name"))));
+  $o.push("  <div class='tooltip-wrapper'>\n    <a class='has-tooltip' href='#' data-toggle='tooltip' data-title='Based on Instance Configuration specific above; Azure Instances A5 through A9 are unavailable with Basic tier virtual machine service.' data-placement='right'></a>\n  </div>\n</td>\n<td>N/A</td>\n<td>N/A</td>\n<td>N/A</td>");
+}
 
 return $o.join("\n").replace(/\s(\w+)='true'/mg, ' $1').replace(/\s(\w+)='false'/mg, '').replace(/\s(?:id|class)=(['"])(\1)/mg, "");
 
@@ -430,13 +464,17 @@ $c = function(text) {
 
 $o = [];
 
-$o.push("<td>" + ($e($c(accounting.formatMoney(this.model.variance() * window.App.currency.rate, {
-  precision: 3,
-  symbol: this.app.currency.symbol
-})))) + "</td>\n<td>" + ($e($c(accounting.formatMoney(this.model.variance() * 8765.81 * window.App.currency.rate, {
-  precision: 2,
-  symbol: this.app.currency.symbol
-})))) + "</td>\n<td>" + ($e($c("" + (this.model.savings()) + "%"))) + "</td>");
+if (this.model.isPlatformAvailable()) {
+  $o.push("<td>" + ($e($c(accounting.formatMoney(this.model.variance() * window.App.currency.rate, {
+    precision: 3,
+    symbol: this.app.currency.symbol
+  })))) + "</td>\n<td>" + ($e($c(accounting.formatMoney(this.model.variance() * 8765.81 * window.App.currency.rate, {
+    precision: 2,
+    symbol: this.app.currency.symbol
+  })))) + "</td>\n<td>" + ($e($c("" + (this.model.savings()) + "%"))) + "</td>");
+} else {
+  $o.push("<td>N/A</td>\n<td>N/A</td>\n<td>N/A</td>");
+}
 
 return $o.join("\n").replace(/\s(\w+)='true'/mg, ' $1').replace(/\s(\w+)='false'/mg, '');
 
@@ -550,6 +588,7 @@ InputPanelView = Backbone.View.extend({
   events: {
     "change #platform-select": "onPlatformChanged",
     "change #currency-select": "onCurrencyChanged",
+    "change [name='pricingTier']": "onFormChanged",
     "keypress .number": "ensureNumber",
     "change select": "onFormChanged",
     "keyup input": "onFormChanged",
@@ -564,7 +603,10 @@ InputPanelView = Backbone.View.extend({
     this.render();
     this.initPlatforms();
     this.onPlatformChanged();
-    return $('.has-tooltip', this.$el).tooltip();
+    return $('.has-tooltip', this.$el).on('click', function(e) {
+      e.preventDefault();
+      return false;
+    }).tooltip();
   },
   render: function() {
     var key, value, _ref, _results;
@@ -572,7 +614,7 @@ InputPanelView = Backbone.View.extend({
     _results = [];
     for (key in _ref) {
       value = _ref[key];
-      if (key === "os" || key === "snapshots" || key === "serviceTier") {
+      if (key === "os" || key === "snapshots" || key === "pricingTier") {
         _results.push($("option[value=" + value + "]", this.$el).attr("selected", "selected"));
       } else if (key === "matchIOPS" || key === "matchCPU" || key === "loadBalancing") {
         _results.push($("input[name=" + key + "]", this.$el).attr("checked", value));
@@ -586,12 +628,18 @@ InputPanelView = Backbone.View.extend({
     var platformKey;
     platformKey = $("#platform-select", this.$el).val();
     if (platformKey === 'azure') {
+      $(".iops", this.$el).hide();
       $(".load-balancing", this.$el).show();
+      $(".pricing-tier", this.$el).show();
       $("span.platform-name").text("Azure");
+      $("option[value='redhat']").attr("disabled", "disabled");
     }
     if (platformKey === 'aws') {
+      $(".iops", this.$el).show();
+      $(".pricing-tier", this.$el).hide();
       $(".load-balancing", this.$el).hide();
       $("span.platform-name").text("AWS");
+      $("option[value='redhat']").removeAttr("disabled");
     }
     $('.platform-image').hide();
     $(".platform-image." + platformKey).show();
@@ -712,6 +760,10 @@ PlatformProductView = Backbone.View.extend({
       model: this.model,
       app: this.app
     }));
+    $('.has-tooltip', this.$el).on('click', function(e) {
+      e.preventDefault();
+      return false;
+    }).tooltip();
     return this;
   }
 });

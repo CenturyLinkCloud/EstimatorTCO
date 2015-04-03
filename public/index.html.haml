@@ -14,7 +14,7 @@
         %tr
           %th{style: "width: 75px;"} # of VMs
           %th Operating System
-          %th.load-balancing{style: "display:none;"} 
+          %th.pricing-tier{style: "display:none;"} 
             Azure VM Service Tier
             .tooltip-wrapper
               %a.has-tooltip{href:"#", data: {toggle: "tooltip", title: "Vertical auto-scaling is a standard feature included in CenturyLink Cloud services whereas horizontal auto-scaling is included in Azure Standard tier virtual machine service.  Auto-scaling is not available in Azure's Basic tier virtual machine service."}}
@@ -30,14 +30,18 @@
             Daily Snapshots
             .tooltip-wrapper
               %a.has-tooltip{href:"#", data: {toggle: "tooltip", title: "Our standard storage includes 5 days of rolling VM snapshots; Premium includes 14 days at a secondary data center."}}
-          %th 
-            Match CPU/RAM Performance 
-            .tooltip-wrapper
-              %a.has-tooltip{href:"#", data: {toggle: "tooltip", title: "Match CenturyLink VM Performance vs competitors based on CloudHarmony.com benchmarks."}}
           %th.load-balancing{style: "display: none;"} 
             Load Balancing
             .tooltip-wrapper
               %a.has-tooltip{href:"#", data: {toggle: "tooltip", title: "Load balancing is included in Azure's Standard tier virtual machine service but is not available for the Basic service tier. Load balancing is a bolt-on feature for CenturyLink Cloud."}}
+          %th 
+            Match CPU/RAM Performance 
+            .tooltip-wrapper
+              %a.has-tooltip{href:"#", data: {toggle: "tooltip", title: "Match CenturyLink VM Performance vs competitors based on CloudHarmony.com benchmarks."}}
+          %th.iops
+            Match IOPS Performance 
+            .tooltip-wrapper
+              %a.has-tooltip{href:"#", data: {toggle: "tooltip", title: "Match CenturyLink VM IOPS performance vs competitors based on CloudHarmony.com benchmarks."}}
           %th.iops{style: "width: 280px;"} IOPS Manual Entry
           %th.iops Provisioned IOPS
         %tr
@@ -48,9 +52,9 @@
               %option{value: "linux"} Linux
               %option{value: "windows"} Windows
               %option{value: "redhat"} Red Hat
-          %td.load-balancing{style: "display:none;"}
-            %select{name: "tier"}
-              %option{value: "standard", selected: "selected" } Standard
+          %td.pricing-tier{style: "display:none;"}
+            %select{name: "pricingTier"}
+              %option{value: "standard" } Standard
               %option{value: "basic"} Basic
           %td 
             %input.number{name: "storage", value: "", type:"text"}
@@ -62,10 +66,10 @@
             %select{name: "snapshots"}
               %option 5
               %option 14
-          %td 
-            %input{type: "checkbox", name: "matchCPU"}
           %td.load-balancing{style: "display: none;"} 
             %input{type: "checkbox", name: "loadBalancing"}
+          %td 
+            %input{type: "checkbox", name: "matchCPU"}
           %td.iops 
             %input{type: "checkbox", name: "matchIOPS"}
           %td.iops 
@@ -94,10 +98,10 @@
 
 .container.main-container
   
-  .calculator-section
+  .calculator-section.clearfix
 
-    #platform-products-table.results-table{style: "width: 340px"}
-      .results-table__header{style: "width: 340px"}
+    #platform-products-table.results-table{style: "width: 380px"}
+      .results-table__header{style: "width: 380px"}
         %div.platform-image.aws
           = image_tag "aws-logo.png"
         %div.platform-image.azure{style: "display: none;"}
@@ -109,8 +113,8 @@
           %th RAM
           %th Hourly
 
-    #century-link-products-table.results-table{style: "width: 290px"}
-      .results-table__header{style: "width: 290px"}
+    #century-link-products-table.results-table{style: "width: 325px"}
+      .results-table__header{style: "width: 325px"}
         = image_tag "cl-black-logo.png"
         %p.description resource allocation equivalent
       %table
@@ -119,8 +123,8 @@
           %th RAM
           %th Hourly
  
-    #variances-table.results-table.results-table--variance{style: "width: 312px"}
-      .results-table__header{style: "width: 312px"}
+    #variances-table.results-table.results-table--variance{style: "width: 349px"}
+      .results-table__header{style: "width: 349px"}
         Variance
       %table
         %tr
