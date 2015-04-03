@@ -1,17 +1,21 @@
+PlatformProductTemplate = require "../templates/platformProduct.haml"
+
 PlatformProductView = Backbone.View.extend
   
+  template: PlatformProductTemplate
   tagName: "tr"
   className: "product"
 
   initialize: (options) ->
     @app = options.app || {}
   render: ->
-    template = require "../templates/platformProduct.haml"
-    @$el.html template(model: @model, app: @app)
-    $('.has-tooltip', @$el).on('click', (e) ->
+    @$el.html @template(model: @model, app: @app)
+    return @
+
+  initTooltips: ->
+    $('.has-tooltip', @$el).off('click').on('click', (e) ->
       e.preventDefault()
       return false
     ).tooltip()
-    return @
 
 module.exports = PlatformProductView

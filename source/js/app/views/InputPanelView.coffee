@@ -1,3 +1,4 @@
+Config = require '../Config.coffee'
 PubSub = require '../PubSub.coffee'
 SettingsModel = require '../models/SettingsModel.coffee'
 AdditionalFeatureView = require './AdditionalFeatureView.coffee'
@@ -8,7 +9,6 @@ InputPanelView = Backbone.View.extend
 
   events:
     "change #platform-select": "onPlatformChanged"
-    "change #currency-select": "onCurrencyChanged"
     "change [name='pricingTier']": "onFormChanged"
     "keypress .number": "ensureNumber"
     "change select": "onFormChanged"
@@ -35,7 +35,7 @@ InputPanelView = Backbone.View.extend
    
   render: ->
     for key, value of @model.attributes
-      if key is "os" or key is "snapshots" or key is "pricingTier"
+      if key is "os" or key is "snapshots" or key is "pricingTier" or key is "currencyId"
         $("option[value=#{value}]", @$el).attr("selected", "selected")
       else if key is "matchIOPS" or key is "matchCPU" or key is "loadBalancing"
         $("input[name=#{key}]", @$el).attr("checked", value)
@@ -57,27 +57,18 @@ InputPanelView = Backbone.View.extend
       $(".load-balancing", @$el).hide()
       $("span.platform-name").text("AWS")
       $("option[value='redhat']").removeAttr("disabled")
-
-    $('.platform-image').hide()
-    $(".platform-image.#{platformKey}").show()
+      
     PubSub.trigger "platform:change", platformKey: platformKey
     @buildPlatformAdditionalFeatures()
 
-  onCurrencyChanged: ->
-    currencyKey = $("#currency-select", @$el).val()
-    PubSub.trigger "currency:change", currencyKey: currencyKey
-    #FOR NOW
-    href = window.top.location.href
-    href = href.replace(/\?currency=.*/, "")
-    href = "#{href}?currency=#{currencyKey}"
-    return window.top.location.href = href
-
-  # onPricingTierChanged: (e) ->
-  #   console.log e.target
   onFormChanged: ->
     data = Backbone.Syphon.serialize @
     data = @updateIOPS(data)
     @model.set(data)
+    if @app.currencyData?
+      newCurId = @model.attributes.currencyId
+      sourceCur = Config.SOURCE_CURRENCY_ID
+      @app.currency = @app.currencyData[sourceCur][newCurId]
     PubSub.trigger "inputPanel:change", data
 
   resetForm: (e) ->

@@ -32,7 +32,7 @@ window.App =
   readyToInitCount: 0
   clcBenchmarking: DEFAULT_BENCHMARKING
   currency:
-    symbol: ""
+    symbol: "$"
     rate: 1.0
     id: "USD"
 
@@ -178,35 +178,24 @@ window.App =
 
 
   getCurrencyDataThenInit: ->
-    @currencyId = Utils.getUrlParameter("currency") || "USD"
-
-    $.ajax
-      url: Config.CURRENCY_FILE_PATH
-      type: "GET"
-      success: (data) =>
-        $currencySelect = $("#currency-select")
-        $currencySelect.html('')
-        _.each data["USD"], (currency) =>
-          selected = if currency.id is @currencyId then "selected" else ""
-          $option = $("<option value='#{currency.id}' #{selected}>#{currency.id}</option>")
+    unless @currencyData?
+      $.ajax
+        url: Config.CURRENCY_FILE_PATH
+        type: "GET"
+        success: (data) =>
+          @currencyData = data
+          $currencySelect = $("#currency-select")
+          $currencySelect.html('')
+          _.each data[Config.SOURCE_CURRENCY_ID], (currency) =>
+            extra = if currency.id is Config.SOURCE_CURRENCY_ID then "" else " (#{currency.rate} x #{Config.SOURCE_CURRENCY_ID})"
+            $option = $("<option value='#{currency.id}'>#{currency.id}#{extra}</option>")
+            $currencySelect.append $option
+          return setTimeout(@init(),500)
+        error: (error) =>
+          $currencySelect = $("#currency-select")
+          $option = $("<option value='#{Config.SOURCE_CURRENCY_ID}'>#{Config.SOURCE_CURRENCY_ID}</option>")
           $currencySelect.append $option
-        @currency = data["USD"][@currencyId]
-        return setTimeout(=>
-          @init()
-        ,500)
-        
-      error: (error) =>
-        @currency = 
-          rate: 1.0
-          id: "USD"
-          symbol: "$"
-        _.each data["USD"], (currency) =>
-          selected = if currency.id is @currencyId then "selected" else ""
-          $option = $("<option value='#{currency.id}' #{selected}>#{currency.id}</option>")
-          $currencySelect.append $option
-        return setTimeout(=>
-          @init()
-        ,500)
+          return setTimeout(@init(),500)
 
 
 #--------------------------------------------------------

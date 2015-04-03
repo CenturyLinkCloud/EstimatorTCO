@@ -13,10 +13,7 @@ SettingsModel = Backbone.Model.extend
     pricingTier: "standard"
     iops: 0
     additionalFeatures: []
-    currency:
-        symbol: "$"
-        id: "USD"
-        rate: 1.0
+    currencyId: "USD"
 
   initialize: ->
 

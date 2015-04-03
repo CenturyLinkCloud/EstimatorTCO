@@ -2,6 +2,7 @@
   {
     "key": "aws",
     "name": "AWS",
+    "image": "/images/aws-logo.png",
     "pricing": {
       "standardPerGB": 0.1,
       "perMillionRequests": 0.00,
@@ -165,6 +166,7 @@
   {
     "key": "azure",
     "name": "Azure",
+    "image": "/images/azure-logo.png",
     "footnotes":[
       "*Based on Instance Configuration specific above; Azure Instances A5 through A9 are unavailable with Basic tier virtual machine service."
     ],

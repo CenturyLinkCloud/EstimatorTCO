@@ -1,13 +1,15 @@
+AdditionalFeatureTemplate = require "../templates/additionalFeature.haml"
+
 AdditionalFeatureView = Backbone.View.extend
 
+  template: AdditionalFeatureTemplate
   tagName: "span"  
   className: "additional-feature"
 
   initialize: (options) ->
 
   render: ->
-    template = require "../templates/additionalFeature.haml"
-    @$el.html template(model: @model)
+    @$el.html @template(model: @model)
 
     return @
 

@@ -4,11 +4,7 @@ var Config;
 Config = {
   NAME: "TCO Estimator",
   CLC_PRICING_URL_ROOT: "./prices/",
-  DEFAULT_CURRENCY: {
-    id: "USD",
-    rate: 1.0,
-    symbol: "$"
-  },
+  SOURCE_CURRENCY_ID: "USD",
   CURRENCY_FILE_PATH: "./currency/exchange-rates.json"
 };
 
@@ -318,11 +314,7 @@ SettingsModel = Backbone.Model.extend({
     pricingTier: "standard",
     iops: 0,
     additionalFeatures: [],
-    currency: {
-      symbol: "$",
-      id: "USD",
-      rate: 1.0
-    }
+    currencyId: "USD"
   },
   initialize: function() {}
 });
@@ -481,16 +473,17 @@ return $o.join("\n").replace(/\s(\w+)='true'/mg, ' $1').replace(/\s(\w+)='fa
 }).call(options)
 };
 },{}],16:[function(require,module,exports){
-var AdditionalFeatureView;
+var AdditionalFeatureTemplate, AdditionalFeatureView;
+
+AdditionalFeatureTemplate = require("../templates/additionalFeature.haml");
 
 AdditionalFeatureView = Backbone.View.extend({
+  template: AdditionalFeatureTemplate,
   tagName: "span",
   className: "additional-feature",
   initialize: function(options) {},
   render: function() {
-    var template;
-    template = require("../templates/additionalFeature.haml");
-    this.$el.html(template({
+    this.$el.html(this.template({
       model: this.model
     }));
     return this;
@@ -501,18 +494,19 @@ module.exports = AdditionalFeatureView;
 
 
 },{"../templates/additionalFeature.haml":12}],17:[function(require,module,exports){
-var CenturyLinkProductView;
+var CenturyLinkProductTemplate, CenturyLinkProductView;
+
+CenturyLinkProductTemplate = require("../templates/centuryLinkProduct.haml");
 
 CenturyLinkProductView = Backbone.View.extend({
+  template: CenturyLinkProductTemplate,
   tagName: "tr",
   className: "product",
   initialize: function(options) {
     return this.app = options.app || {};
   },
   render: function() {
-    var template;
-    template = require("../templates/centuryLinkProduct.haml");
-    this.$el.html(template({
+    this.$el.html(this.template({
       model: this.model,
       app: this.app
     }));
@@ -575,7 +569,9 @@ module.exports = CenturyLinkProductsView;
 
 
 },{"../PubSub.coffee":2,"../views/CenturyLinkProductView.coffee":17}],19:[function(require,module,exports){
-var AdditionalFeatureView, InputPanelView, PubSub, SettingsModel;
+var AdditionalFeatureView, Config, InputPanelView, PubSub, SettingsModel;
+
+Config = require('../Config.coffee');
 
 PubSub = require('../PubSub.coffee');
 
@@ -587,7 +583,6 @@ InputPanelView = Backbone.View.extend({
   el: "#input-panel",
   events: {
     "change #platform-select": "onPlatformChanged",
-    "change #currency-select": "onCurrencyChanged",
     "change [name='pricingTier']": "onFormChanged",
     "keypress .number": "ensureNumber",
     "change select": "onFormChanged",
@@ -614,7 +609,7 @@ InputPanelView = Backbone.View.extend({
     _results = [];
     for (key in _ref) {
       value = _ref[key];
-      if (key === "os" || key === "snapshots" || key === "pricingTier") {
+      if (key === "os" || key === "snapshots" || key === "pricingTier" || key === "currencyId") {
         _results.push($("option[value=" + value + "]", this.$el).attr("selected", "selected"));
       } else if (key === "matchIOPS" || key === "matchCPU" || key === "loadBalancing") {
         _results.push($("input[name=" + key + "]", this.$el).attr("checked", value));
@@ -641,29 +636,21 @@ InputPanelView = Backbone.View.extend({
       $("span.platform-name").text("AWS");
       $("option[value='redhat']").removeAttr("disabled");
     }
-    $('.platform-image').hide();
-    $(".platform-image." + platformKey).show();
     PubSub.trigger("platform:change", {
       platformKey: platformKey
     });
     return this.buildPlatformAdditionalFeatures();
   },
-  onCurrencyChanged: function() {
-    var currencyKey, href;
-    currencyKey = $("#currency-select", this.$el).val();
-    PubSub.trigger("currency:change", {
-      currencyKey: currencyKey
-    });
-    href = window.top.location.href;
-    href = href.replace(/\?currency=.*/, "");
-    href = "" + href + "?currency=" + currencyKey;
-    return window.top.location.href = href;
-  },
   onFormChanged: function() {
-    var data;
+    var data, newCurId, sourceCur;
     data = Backbone.Syphon.serialize(this);
     data = this.updateIOPS(data);
     this.model.set(data);
+    if (this.app.currencyData != null) {
+      newCurId = this.model.attributes.currencyId;
+      sourceCur = Config.SOURCE_CURRENCY_ID;
+      this.app.currency = this.app.currencyData[sourceCur][newCurId];
+    }
     return PubSub.trigger("inputPanel:change", data);
   },
   resetForm: function(e) {
@@ -744,27 +731,30 @@ InputPanelView = Backbone.View.extend({
 module.exports = InputPanelView;
 
 
-},{"../PubSub.coffee":2,"../models/SettingsModel.coffee":11,"./AdditionalFeatureView.coffee":16}],20:[function(require,module,exports){
-var PlatformProductView;
+},{"../Config.coffee":1,"../PubSub.coffee":2,"../models/SettingsModel.coffee":11,"./AdditionalFeatureView.coffee":16}],20:[function(require,module,exports){
+var PlatformProductTemplate, PlatformProductView;
+
+PlatformProductTemplate = require("../templates/platformProduct.haml");
 
 PlatformProductView = Backbone.View.extend({
+  template: PlatformProductTemplate,
   tagName: "tr",
   className: "product",
   initialize: function(options) {
     return this.app = options.app || {};
   },
   render: function() {
-    var template;
-    template = require("../templates/platformProduct.haml");
-    this.$el.html(template({
+    this.$el.html(this.template({
       model: this.model,
       app: this.app
     }));
-    $('.has-tooltip', this.$el).on('click', function(e) {
+    return this;
+  },
+  initTooltips: function() {
+    return $('.has-tooltip', this.$el).off('click').on('click', function(e) {
       e.preventDefault();
       return false;
     }).tooltip();
-    return this;
   }
 });
 
@@ -783,7 +773,8 @@ PlatformProductsView = Backbone.View.extend({
   productViews: [],
   initialize: function(options) {
     this.app = options.app || {};
-    return PubSub.on("inputPanel:change", this.updateProducts, this);
+    PubSub.on("inputPanel:change", this.updateProducts, this);
+    return PubSub.on("platform:change", this.updateImage, this);
   },
   setCollection: function(productsCollection) {
     return this.productsCollection = productsCollection;
@@ -811,6 +802,10 @@ PlatformProductsView = Backbone.View.extend({
         return productView.remove();
       };
     })(this));
+  },
+  updateImage: function(data) {
+    $('.platform-image').hide();
+    return $(".platform-image." + data.platformKey).show();
   }
 });
 
@@ -926,7 +921,7 @@ window.App = {
   readyToInitCount: 0,
   clcBenchmarking: DEFAULT_BENCHMARKING,
   currency: {
-    symbol: "",
+    symbol: "$",
     rate: 1.0,
     id: "USD"
   },
@@ -1086,46 +1081,36 @@ window.App = {
     }
   },
   getCurrencyDataThenInit: function() {
-    this.currencyId = Utils.getUrlParameter("currency") || "USD";
-    return $.ajax({
-      url: Config.CURRENCY_FILE_PATH,
-      type: "GET",
-      success: (function(_this) {
-        return function(data) {
-          var $currencySelect;
-          $currencySelect = $("#currency-select");
-          $currencySelect.html('');
-          _.each(data["USD"], function(currency) {
-            var $option, selected;
-            selected = currency.id === _this.currencyId ? "selected" : "";
-            $option = $("<option value='" + currency.id + "' " + selected + ">" + currency.id + "</option>");
-            return $currencySelect.append($option);
-          });
-          _this.currency = data["USD"][_this.currencyId];
-          return setTimeout(function() {
-            return _this.init();
-          }, 500);
-        };
-      })(this),
-      error: (function(_this) {
-        return function(error) {
-          _this.currency = {
-            rate: 1.0,
-            id: "USD",
-            symbol: "$"
+    if (this.currencyData == null) {
+      return $.ajax({
+        url: Config.CURRENCY_FILE_PATH,
+        type: "GET",
+        success: (function(_this) {
+          return function(data) {
+            var $currencySelect;
+            _this.currencyData = data;
+            $currencySelect = $("#currency-select");
+            $currencySelect.html('');
+            _.each(data[Config.SOURCE_CURRENCY_ID], function(currency) {
+              var $option, extra;
+              extra = currency.id === Config.SOURCE_CURRENCY_ID ? "" : " (" + currency.rate + " x " + Config.SOURCE_CURRENCY_ID + ")";
+              $option = $("<option value='" + currency.id + "'>" + currency.id + extra + "</option>");
+              return $currencySelect.append($option);
+            });
+            return setTimeout(_this.init(), 500);
           };
-          _.each(data["USD"], function(currency) {
-            var $option, selected;
-            selected = currency.id === _this.currencyId ? "selected" : "";
-            $option = $("<option value='" + currency.id + "' " + selected + ">" + currency.id + "</option>");
-            return $currencySelect.append($option);
-          });
-          return setTimeout(function() {
-            return _this.init();
-          }, 500);
-        };
-      })(this)
-    });
+        })(this),
+        error: (function(_this) {
+          return function(error) {
+            var $currencySelect, $option;
+            $currencySelect = $("#currency-select");
+            $option = $("<option value='" + Config.SOURCE_CURRENCY_ID + "'>" + Config.SOURCE_CURRENCY_ID + "</option>");
+            $currencySelect.append($option);
+            return setTimeout(_this.init(), 500);
+          };
+        })(this)
+      });
+    }
   }
 };
 

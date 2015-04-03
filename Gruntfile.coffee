@@ -148,7 +148,7 @@ module.exports = (grunt) ->
         options:
           reload: true
       scripts:
-        files: ["#{source}/js/**/*.{js,coffee}"]
+        files: ["#{source}/js/**/*.{js,coffee,haml}"]
         tasks: ["browserify"]
         options: 
           spawn: true
