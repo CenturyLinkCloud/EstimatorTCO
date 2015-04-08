@@ -114,7 +114,9 @@ InputPanelView = Backbone.View.extend
 
   openSharePanel: (e) ->
     e.preventDefault()
-    shareLink = location.href + "#" + JSON.stringify(@model.attributes)
+    rootUrl = window.top.location.href
+    rootUrl += "/" if rootUrl.charAt(rootUrl.length-1) isnt "/"
+    shareLink = rootUrl + "#" + JSON.stringify(@model.attributes)
 
     $(".share-link").val(shareLink)
     $(".share-link").attr("href", shareLink)

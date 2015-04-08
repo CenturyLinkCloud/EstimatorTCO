@@ -702,9 +702,13 @@ InputPanelView = Backbone.View.extend({
     })(this));
   },
   openSharePanel: function(e) {
-    var shareLink;
+    var rootUrl, shareLink;
     e.preventDefault();
-    shareLink = location.href + "#" + JSON.stringify(this.model.attributes);
+    rootUrl = window.top.location.href;
+    if (rootUrl.charAt(rootUrl.length - 1) !== "/") {
+      rootUrl += "/";
+    }
+    shareLink = rootUrl + "#" + JSON.stringify(this.model.attributes);
     $(".share-link").val(shareLink);
     $(".share-link").attr("href", shareLink);
     $(".share-section").slideDown(300);
