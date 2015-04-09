@@ -22,7 +22,6 @@ ProductsCollection = require './app/collections/ProductsCollection.coffee'
 
 DEFAULT_PRICING = require './app/data/default-pricing-object.coffee'
 DEFAULT_BENCHMARKING = require './app/data/benchmarking.coffee'
-PRICES_URL_ROOT = Config.CLC_PRICING_URL_ROOT
 
 #--------------------------------------------------------
 # Init
@@ -103,7 +102,7 @@ window.App =
   loadCLCData: ->
     $.ajax
       type: "GET"
-      url: PRICES_URL_ROOT + "default.json"
+      url: Config.CLC_PRICING_URL_ROOT + "default.json"
       success: (data) =>
         @clcPricing = @parsePricingData(data)
         return @onPricingSync()
@@ -203,4 +202,5 @@ window.App =
 #--------------------------------------------------------
 
 $ ->
-  App.getCurrencyDataThenInit()
+  Config.init(App)
+

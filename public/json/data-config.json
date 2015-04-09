@@ -1,0 +1,10 @@
+{
+  "pricingRootPath": "/prices/",
+  "platformsFile": "./json/platforms.json",
+  "currencyFile": "./json/exchange-rates.json",
+  "defaultCurrency": {
+    "id": "USD",
+    "symbol": "$",
+    "rate": 1.0
+  }
+}

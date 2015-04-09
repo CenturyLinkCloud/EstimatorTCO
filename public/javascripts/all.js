@@ -5,7 +5,22 @@ Config = {
   NAME: "TCO Estimator",
   CLC_PRICING_URL_ROOT: "/prices/",
   SOURCE_CURRENCY_ID: "USD",
-  CURRENCY_FILE_PATH: "./currency/exchange-rates.json"
+  CURRENCY_FILE_PATH: "./json/exchange-rates.json",
+  PLATFORMS_DATA: "./json/platforms.json",
+  init: function(app) {
+    return $.getJSON('./json/data-config.json', (function(_this) {
+      return function(data) {
+        var config;
+        config = data;
+        console.log(data);
+        _this.CLC_PRICING_URL_ROOT = config.pricingRootPath;
+        _this.SOURCE_CURRENCY_ID = config.defaultCurrency.id;
+        _this.CURRENCY_FILE_PATH = config.currencyFile;
+        _this.PLATFORMS_DATA = config.platformsFile;
+        return app.getCurrencyDataThenInit();
+      };
+    })(this));
+  }
 };
 
 module.exports = Config;
@@ -55,13 +70,15 @@ module.exports = Utils;
 
 
 },{}],5:[function(require,module,exports){
-var PlatformCollection, PlatformModel;
+var Config, PlatformCollection, PlatformModel;
 
 PlatformModel = require('../models/PlatformModel.coffee');
 
+Config = require('../Config.coffee');
+
 PlatformCollection = Backbone.Collection.extend({
   model: PlatformModel,
-  url: "json/platforms.json",
+  url: Config.PLATFORMS_DATA,
   initialize: function() {
     return this.fetch();
   },
@@ -75,7 +92,7 @@ PlatformCollection = Backbone.Collection.extend({
 module.exports = PlatformCollection;
 
 
-},{"../models/PlatformModel.coffee":9}],6:[function(require,module,exports){
+},{"../Config.coffee":1,"../models/PlatformModel.coffee":9}],6:[function(require,module,exports){
 var ProductCollection, ProductModel;
 
 ProductModel = require('../models/ProductModel.coffee');
@@ -891,7 +908,7 @@ module.exports = VariancesView;
 
 
 },{"../PubSub.coffee":2,"../views/VarianceView.coffee":22}],24:[function(require,module,exports){
-var CenturyLinkProductsView, Config, DEFAULT_BENCHMARKING, DEFAULT_PRICING, InputPanelView, PRICES_URL_ROOT, PlatformProductsView, PlatformsCollection, ProductsCollection, PubSub, Router, SettingsModel, Utils, VariancesView;
+var CenturyLinkProductsView, Config, DEFAULT_BENCHMARKING, DEFAULT_PRICING, InputPanelView, PlatformProductsView, PlatformsCollection, ProductsCollection, PubSub, Router, SettingsModel, Utils, VariancesView;
 
 Config = require('./app/Config.coffee');
 
@@ -918,8 +935,6 @@ ProductsCollection = require('./app/collections/ProductsCollection.coffee');
 DEFAULT_PRICING = require('./app/data/default-pricing-object.coffee');
 
 DEFAULT_BENCHMARKING = require('./app/data/benchmarking.coffee');
-
-PRICES_URL_ROOT = Config.CLC_PRICING_URL_ROOT;
 
 window.App = {
   readyToInitCount: 0,
@@ -983,7 +998,7 @@ window.App = {
   loadCLCData: function() {
     $.ajax({
       type: "GET",
-      url: PRICES_URL_ROOT + "default.json",
+      url: Config.CLC_PRICING_URL_ROOT + "default.json",
       success: (function(_this) {
         return function(data) {
           _this.clcPricing = _this.parsePricingData(data);
@@ -1119,7 +1134,7 @@ window.App = {
 };
 
 $(function() {
-  return App.getCurrencyDataThenInit();
+  return Config.init(App);
 });
 
 
