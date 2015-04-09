@@ -67,7 +67,7 @@ InputPanelView = Backbone.View.extend
     @model.set(data)
     if @app.currencyData?
       newCurId = @model.attributes.currencyId
-      sourceCur = Config.SOURCE_CURRENCY_ID
+      sourceCur = Config.DEFAULT_CURRENCY_ID
       @app.currency = @app.currencyData[sourceCur][newCurId]
     PubSub.trigger "inputPanel:change", data
 

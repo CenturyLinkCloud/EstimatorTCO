@@ -38,6 +38,15 @@ window.App =
   init: ->
     dataFromURL = @getDataFromURL()
 
+    $.getJSON Config.BENCHMARKING_URL, (data) =>
+      if data?
+        @clcBenchmarking = data
+    $.getJSON Config.DEFAULT_PRICING_URL, (data) =>
+      if data?
+        DEFAULT_PRICING = data
+
+
+
     @settingsModel = new SettingsModel()
     @settingsModel.set(dataFromURL) if dataFromURL
 
@@ -102,7 +111,7 @@ window.App =
   loadCLCData: ->
     $.ajax
       type: "GET"
-      url: Config.CLC_PRICING_URL_ROOT + "default.json"
+      url: Config.PRICING_URL
       success: (data) =>
         @clcPricing = @parsePricingData(data)
         return @onPricingSync()
@@ -179,20 +188,20 @@ window.App =
   getCurrencyDataThenInit: ->
     unless @currencyData?
       $.ajax
-        url: Config.CURRENCY_FILE_PATH
+        url: Config.CURRENCY_URL
         type: "GET"
         success: (data) =>
           @currencyData = data
           $currencySelect = $("#currency-select")
           $currencySelect.html('')
-          _.each data[Config.SOURCE_CURRENCY_ID], (currency) =>
-            extra = if currency.id is Config.SOURCE_CURRENCY_ID then "" else " (#{currency.rate} x #{Config.SOURCE_CURRENCY_ID})"
+          _.each data[Config.DEFAULT_CURRENCY_ID], (currency) =>
+            extra = if currency.id is Config.DEFAULT_CURRENCY_ID then "" else " (#{currency.rate} x #{Config.DEFAULT_CURRENCY_ID})"
             $option = $("<option value='#{currency.id}'>#{currency.id}#{extra}</option>")
             $currencySelect.append $option
           return setTimeout(@init(),500)
         error: (error) =>
           $currencySelect = $("#currency-select")
-          $option = $("<option value='#{Config.SOURCE_CURRENCY_ID}'>#{Config.SOURCE_CURRENCY_ID}</option>")
+          $option = $("<option value='#{Config.DEFAULT_CURRENCY_ID}'>#{Config.DEFAULT_CURRENCY_ID}</option>")
           $currencySelect.append $option
           return setTimeout(@init(),500)
 

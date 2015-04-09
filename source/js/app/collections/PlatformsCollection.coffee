@@ -3,7 +3,7 @@ Config = require '../Config.coffee'
 
 PlatformCollection = Backbone.Collection.extend
   model: PlatformModel
-  url: Config.PLATFORMS_DATA
+  url: Config.PLATFORMS_URL
 
   initialize: ->
     @fetch()

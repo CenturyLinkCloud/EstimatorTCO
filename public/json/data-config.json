@@ -1,10 +1,12 @@
 {
-  "pricingRootPath": "/prices/",
-  "platformsFile": "./json/platforms.json",
-  "currencyFile": "./json/exchange-rates.json",
+  "pricingUrl": "/prices/default.json",
+  "platformsUrl": "./json/platforms.json",
+  "currencyUrl": "./json/exchange-rates.json",
   "defaultCurrency": {
     "id": "USD",
     "symbol": "$",
     "rate": 1.0
-  }
+  },
+  "benchmarkingUrl": "./json/benchmarking.json",
+  "defaultPricingUrl": "./json/default-pricing.json"
 }

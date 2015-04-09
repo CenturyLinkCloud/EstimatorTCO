@@ -3,20 +3,38 @@ var Config;
 
 Config = {
   NAME: "TCO Estimator",
-  CLC_PRICING_URL_ROOT: "/prices/",
-  SOURCE_CURRENCY_ID: "USD",
-  CURRENCY_FILE_PATH: "./json/exchange-rates.json",
-  PLATFORMS_DATA: "./json/platforms.json",
+  PRICING_URL: "/prices/default.json",
+  DEFAULT_CURRENCY_ID: "USD",
+  CURRENCY_URL: "./json/exchange-rates.json",
+  PLATFORMS_URL: "./json/platforms.json",
+  BENCHMARKING_URL: "./json/benchmarking.json",
+  DEFAULT_PRICING_URL: "./json/default-pricing.json",
   init: function(app) {
     return $.getJSON('./json/data-config.json', (function(_this) {
       return function(data) {
         var config;
         config = data;
-        console.log(data);
-        _this.CLC_PRICING_URL_ROOT = config.pricingRootPath;
-        _this.SOURCE_CURRENCY_ID = config.defaultCurrency.id;
-        _this.CURRENCY_FILE_PATH = config.currencyFile;
-        _this.PLATFORMS_DATA = config.platformsFile;
+        if (config.name != null) {
+          _this.NAME = config.name;
+        }
+        if (config.pricingUrl != null) {
+          _this.PRICING_URL = config.pricingUrl;
+        }
+        if (config.defaultCurrency != null) {
+          _this.DEFAULT_CURRENCY_ID = config.defaultCurrency.id;
+        }
+        if (config.currencyUrl != null) {
+          _this.CURRENCY_URL = config.currencyUrl;
+        }
+        if (config.platformsUrl != null) {
+          _this.PLATFORMS_URL = config.platformsUrl;
+        }
+        if (config.benchmarkingUrl != null) {
+          _this.BENCHMARKING_URL = config.benchmarkingUrl;
+        }
+        if (config.defaultPricingUrl != null) {
+          _this.DEFAULT_PRICING_URL = config.defaultPricingUrl;
+        }
         return app.getCurrencyDataThenInit();
       };
     })(this));
@@ -78,7 +96,7 @@ Config = require('../Config.coffee');
 
 PlatformCollection = Backbone.Collection.extend({
   model: PlatformModel,
-  url: Config.PLATFORMS_DATA,
+  url: Config.PLATFORMS_URL,
   initialize: function() {
     return this.fetch();
   },
@@ -665,7 +683,7 @@ InputPanelView = Backbone.View.extend({
     this.model.set(data);
     if (this.app.currencyData != null) {
       newCurId = this.model.attributes.currencyId;
-      sourceCur = Config.SOURCE_CURRENCY_ID;
+      sourceCur = Config.DEFAULT_CURRENCY_ID;
       this.app.currency = this.app.currencyData[sourceCur][newCurId];
     }
     return PubSub.trigger("inputPanel:change", data);
@@ -947,6 +965,20 @@ window.App = {
   init: function() {
     var dataFromURL;
     dataFromURL = this.getDataFromURL();
+    $.getJSON(Config.BENCHMARKING_URL, (function(_this) {
+      return function(data) {
+        if (data != null) {
+          return _this.clcBenchmarking = data;
+        }
+      };
+    })(this));
+    $.getJSON(Config.DEFAULT_PRICING_URL, (function(_this) {
+      return function(data) {
+        if (data != null) {
+          return DEFAULT_PRICING = data;
+        }
+      };
+    })(this));
     this.settingsModel = new SettingsModel();
     if (dataFromURL) {
       this.settingsModel.set(dataFromURL);
@@ -998,7 +1030,7 @@ window.App = {
   loadCLCData: function() {
     $.ajax({
       type: "GET",
-      url: Config.CLC_PRICING_URL_ROOT + "default.json",
+      url: Config.PRICING_URL,
       success: (function(_this) {
         return function(data) {
           _this.clcPricing = _this.parsePricingData(data);
@@ -1102,7 +1134,7 @@ window.App = {
   getCurrencyDataThenInit: function() {
     if (this.currencyData == null) {
       return $.ajax({
-        url: Config.CURRENCY_FILE_PATH,
+        url: Config.CURRENCY_URL,
         type: "GET",
         success: (function(_this) {
           return function(data) {
@@ -1110,9 +1142,9 @@ window.App = {
             _this.currencyData = data;
             $currencySelect = $("#currency-select");
             $currencySelect.html('');
-            _.each(data[Config.SOURCE_CURRENCY_ID], function(currency) {
+            _.each(data[Config.DEFAULT_CURRENCY_ID], function(currency) {
               var $option, extra;
-              extra = currency.id === Config.SOURCE_CURRENCY_ID ? "" : " (" + currency.rate + " x " + Config.SOURCE_CURRENCY_ID + ")";
+              extra = currency.id === Config.DEFAULT_CURRENCY_ID ? "" : " (" + currency.rate + " x " + Config.DEFAULT_CURRENCY_ID + ")";
               $option = $("<option value='" + currency.id + "'>" + currency.id + extra + "</option>");
               return $currencySelect.append($option);
             });
@@ -1123,7 +1155,7 @@ window.App = {
           return function(error) {
             var $currencySelect, $option;
             $currencySelect = $("#currency-select");
-            $option = $("<option value='" + Config.SOURCE_CURRENCY_ID + "'>" + Config.SOURCE_CURRENCY_ID + "</option>");
+            $option = $("<option value='" + Config.DEFAULT_CURRENCY_ID + "'>" + Config.DEFAULT_CURRENCY_ID + "</option>");
             $currencySelect.append($option);
             return setTimeout(_this.init(), 500);
           };
