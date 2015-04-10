@@ -9,7 +9,8 @@ html {
   box-sizing: border-box; }
 
 body {
-  background: white; }
+  background: white;
+  font-family: 'Open Sans', sans-serif; }
 
 p, .price {
   color: #807f83; }
@@ -170,6 +171,9 @@ input[type=text], input[type=number] {
   width: 200px;
   z-index: 190; }
 
+.load-balancing .tooltip-wrapper .tooltip, .pricing-tier .tooltip-wrapper .tooltip {
+  font-size: 9px; }
+
 .rangeslider {
   display: inline-block;
   width: 105px; }
@@ -262,7 +266,7 @@ input[type=text], input[type=number] {
 .green-section {
   width: 100%;
   background: #00853f;
-  padding: 80px 20px 20px;
+  padding: 30px 20px 30px;
   overflow: hidden;
   z-index: 100;
   color: white; }

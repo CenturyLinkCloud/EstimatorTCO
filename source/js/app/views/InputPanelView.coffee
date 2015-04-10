@@ -32,6 +32,8 @@ InputPanelView = Backbone.View.extend
       e.preventDefault()
       return false
     ).tooltip()
+
+    # $('.has-tooltip', @$el).tooltip('show')
    
   render: ->
     for key, value of @model.attributes
