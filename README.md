@@ -34,7 +34,7 @@ The project uses Middleman for compiling a static HTML site from Ruby and uses G
 
 ### April, 10 2015
 
-- Now pulls pricing data from the pricing data at '/public/prices' found in PublicPlatform
+- Now pulls pricing data from the pricing data at '/public/prices' found in PublicPlatform, specifically '/public/prices/default.json'
 - Incorporated exchange rate switching
 - Added exchange rates data file to tco calculator repo
 - Added config file, '/json/data-config.json', to tco calculator repo which can be used to customize the paths to the data files used in the tco calculator
