@@ -24,7 +24,7 @@
                 "name": "Block Storage w/ Standard Backup",
                 "descriptionHtml" : "Persistent storage (single data center, 5 days of snapshot backup). Price per GB.",
                 "type" : "hourly (allocated)",
-                "hourly" : 0.000205,
+                "hourly" : 0.0002,
                 "href": "/block-storage"
             },
             {
