@@ -29,3 +29,20 @@ The project uses Middleman for compiling a static HTML site from Ruby and uses G
 
 - Designed by Nathan Young at CenturyLink Cloud / nathan.young@ctl.io
 - Developed by Matt Fordham at WINTR / matt@wintr.us
+
+## Changelog
+
+### April, 10 2015
+
+- Now pulls pricing data from the pricing data at '/public/prices' found in PublicPlatform
+- Incorporated exchange rate switching
+- Added exchange rates data file to tco calculator repo
+- Added config file, '/json/data-config.json', to tco calculator repo which can be used to customize the paths to the data files used in the tco calculator
+  - Paths beginning with "./" point to files relative to the tco calculator files, i.e. those in /public/static/calculator when in PublicPlatform build
+  - Paths beginning with "/" point to files relative to the PublicPlatform root, i.e. "/prices/" points to the prices file the Pricing page uses.
+- In order to pull the right data from the pricing sheet, a "key" has been added to products on the pricing sheet where the data is needed in the calculator, e.g. adding "server:storage:premium" to the product allows it to match up with the corresponding item in the calcuator
+- Updated AWS platform data
+- Platform data for both Azure and AWS are now in a single file, '/json/platforms.json' and can be changed via the new config file, '/json/data-config.json'
+- Added Azure platform data to the calcuator
+- Added Azure VM Service Tier selector and Load Balancing checkbox to engage Azure specific calcluations
+- Added currency to share URL
