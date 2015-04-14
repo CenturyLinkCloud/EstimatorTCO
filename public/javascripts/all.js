@@ -627,11 +627,17 @@ InputPanelView = Backbone.View.extend({
     "click .reset-btn": "resetForm"
   },
   initialize: function(options) {
+    var newCurId, sourceCur;
     this.options = options || {};
     this.app = options.app || {};
+    if (this.app.currencyData != null) {
+      newCurId = this.model.attributes.currencyId;
+      sourceCur = Config.DEFAULT_CURRENCY_ID;
+      this.app.currency = this.app.currencyData[sourceCur][newCurId];
+    }
     this.listenTo(this.model, 'change', this.render);
-    this.render();
     this.initPlatforms();
+    this.render();
     this.onPlatformChanged();
     return $('.has-tooltip', this.$el).on('click', function(e) {
       e.preventDefault();
@@ -644,7 +650,7 @@ InputPanelView = Backbone.View.extend({
     _results = [];
     for (key in _ref) {
       value = _ref[key];
-      if (key === "os" || key === "snapshots" || key === "pricingTier" || key === "currencyId") {
+      if (key === "os" || key === "snapshots" || key === "pricingTier" || key === "currencyId" || key === "platform") {
         _results.push($("option[value=" + value + "]", this.$el).attr("selected", "selected"));
       } else if (key === "matchIOPS" || key === "matchCPU" || key === "loadBalancing") {
         _results.push($("input[name=" + key + "]", this.$el).attr("checked", value));

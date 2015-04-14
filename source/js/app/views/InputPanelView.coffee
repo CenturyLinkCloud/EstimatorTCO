@@ -21,23 +21,26 @@ InputPanelView = Backbone.View.extend
     @options = options || {}
     @app = options.app || {}
 
+    if @app.currencyData?
+      newCurId = @model.attributes.currencyId
+      sourceCur = Config.DEFAULT_CURRENCY_ID
+      @app.currency = @app.currencyData[sourceCur][newCurId]
+
     @.listenTo @model, 'change', @render
     # @.listenTo @model, 'change', @onFormChanged
-
-    @render()
     @initPlatforms()
+    @render()
+    
     @onPlatformChanged()
 
     $('.has-tooltip', @$el).on('click', (e) ->
       e.preventDefault()
       return false
     ).tooltip()
-
-    # $('.has-tooltip', @$el).tooltip('show')
    
   render: ->
     for key, value of @model.attributes
-      if key is "os" or key is "snapshots" or key is "pricingTier" or key is "currencyId"
+      if key is "os" or key is "snapshots" or key is "pricingTier" or key is "currencyId" or key is "platform"
         $("option[value=#{value}]", @$el).attr("selected", "selected")
       else if key is "matchIOPS" or key is "matchCPU" or key is "loadBalancing"
         $("input[name=#{key}]", @$el).attr("checked", value)
