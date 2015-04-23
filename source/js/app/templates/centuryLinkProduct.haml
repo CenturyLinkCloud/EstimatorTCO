@@ -1,3 +1,8 @@
-%td= @model.clcEquivalentCpu()
-%td= @model.clcEquivalentRam()
-%td= accounting.formatMoney(@model.clcTotalPrice(), {precision: 3}) 
+- if @model.isPlatformAvailable()
+  %td= @model.clcEquivalentCpu()
+  %td= @model.clcEquivalentRam()
+  %td= accounting.formatMoney(@model.clcTotalPrice() * window.App.currency.rate , {precision: 3, symbol: @app.currency.symbol})
+- else
+  %td N/A
+  %td N/A
+  %td N/A

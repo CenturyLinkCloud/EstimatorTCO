@@ -2,15 +2,16 @@
   {
     "key": "aws",
     "name": "AWS",
+    "image": "/images/aws-logo.png",
     "pricing": {
-      "standardPerGB": 0.05,
-      "perMillionRequests": 0.05,
+      "standardPerGB": 0.1,
+      "perMillionRequests": 0.00,
       "provisionedPerGB": 0.125,
-      "provisionedIOPSPerMonth": 0.10,
+      "provisionedIOPSPerMonth": 0.065,
       "firstSnapshot": 0.7,
       "remainingSnapshotsEach": 0.03,
       "snapshotPerGB": 0.095,
-      "bandwidthOutbound": 0.1
+      "bandwidthOutbound": 0.09
     },
     "benchmarking": {
       "cpu": 1.524886878,
@@ -20,7 +21,7 @@
       {
         "key": "mcm",
         "name": "Cloud Manager",
-        "pricing": 0.02
+        "pricing": 0.00
       },
       {
         "key": "rightScale",
@@ -159,6 +160,389 @@
         "windows": 1.328,
         "redhat": 0.130,
         "rightScaleRCU": 16
+      }
+    ]
+  },
+  {
+    "key": "azure",
+    "name": "Azure",
+    "image": "/images/azure-logo.png",
+    "footnotes":[
+      "*Based on Instance Configuration specific above; Azure Instances A5 through A9 are unavailable with Basic tier virtual machine service."
+    ],
+    "pricing": {
+      "standardPerGB": 0.024,
+      "perMillionRequests": 0.036,
+      "provisionedPerGB": 0.0,
+      "provisionedIOPSPerMonth": 0.0,
+      "firstSnapshot": 0.7,
+      "remainingSnapshotsEach": 0.03,
+      "snapshotPerGB": 0.2,
+      "bandwidthOutbound": 0.085
+    },
+    "benchmarking": {
+      "cpu": 3.25,
+      "ram": 1.919
+    },
+    "additionalFeatures": [
+      {
+        "key": "mcm",
+        "name": "Cloud Manager",
+        "pricing": 0.02
+      },
+      {
+        "key": "rightScale",
+        "name": "RightScale",
+        "pricing": 0.08
+      },
+      {
+        "key": "alertLogic",
+        "name": "AlertLogic",
+        "pricing": 0.624
+      }
+    ],
+    "products": [
+      {
+        "name": "A0",
+        "cpu": 1,
+        "ram": 0.768,
+        "price": 0.020,
+        "windows": 0.020,
+        "redhat": 0.0,
+        "rightScaleRCU": 0.25,
+        "pricing": {
+          "standard": {
+            "linux": 0.020,
+            "windows": 0.020
+          },
+          "basic": {
+            "linux": 0.018,
+            "windows": 0.018
+          }
+        }
+      },
+      {
+        "name": "A1",
+        "cpu": 1,
+        "ram": 1.75,
+        "price": 0.060,
+        "windows": 0.09,
+        "redhat": 0.0,
+        "rightScaleRCU": 0.5,
+        "pricing": {
+          "standard": {
+            "linux": 0.060,
+            "windows": 0.09
+          },
+          "basic": {
+            "linux": 0.044,
+            "windows": 0.074
+          }
+        }
+      },
+      {
+        "name": "A2",
+        "cpu": 2,
+        "ram": 3.5,
+        "price": 0.120,
+        "windows": 0.18,
+        "redhat": 0.0,
+        "rightScaleRCU": 1,
+        "pricing": {
+          "standard": {
+            "linux": 0.120,
+            "windows": 0.180
+          },
+          "basic": {
+            "linux": 0.088,
+            "windows": 0.148
+          }
+        }
+      },
+      {
+        "name": "A3",
+        "cpu": 4,
+        "ram": 7,
+        "price": 0.24,
+        "windows": 0.36,
+        "redhat": 0.0,
+        "rightScaleRCU": 2,
+        "pricing": {
+          "standard": {
+            "linux": 0.24,
+            "windows": 0.36
+          },
+          "basic": {
+            "linux": 0.176,
+            "windows": 0.296
+          }
+        }
+      },
+      {
+        "name": "A4",
+        "cpu": 8,
+        "ram": 14,
+        "price": 0.48,
+        "windows": 0.72,
+        "redhat": 0.0,
+        "rightScaleRCU": 4,
+        "pricing": {
+          "standard": {
+            "linux": 0.48,
+            "windows": 0.72
+          },
+          "basic": {
+            "linux": 0.352,
+            "windows": 0.592
+          }
+        }
+      },
+      {
+        "name": "A5",
+        "cpu": 2,
+        "ram": 14,
+        "price": 0.22,
+        "windows": 0.30,
+        "redhat": 0.0,
+        "rightScaleRCU": 1,
+        "pricing": {
+          "standard": {
+            "linux": 0.22,
+            "windows": 0.30
+          },
+          "basic": {
+            "linux": 0.0,
+            "windows": 0.0
+          }
+        }
+      },
+      {
+        "name": "A6",
+        "cpu": 4,
+        "ram": 28,
+        "price": 0.44,
+        "windows": 0.60,
+        "redhat": 0.0,
+        "rightScaleRCU": 2,
+        "pricing": {
+          "standard": {
+            "linux": 0.44,
+            "windows": 0.60
+          },
+          "basic": {
+            "linux": 0.0,
+            "windows": 0.0
+          }
+        }
+      },
+      {
+        "name": "A7",
+        "cpu": 8,
+        "ram": 56,
+        "price": 0.88,
+        "windows": 1.20,
+        "redhat": 0.0,
+        "rightScaleRCU": 8,
+        "pricing": {
+          "standard": {
+            "linux": 0.88,
+            "windows": 1.20
+          },
+          "basic": {
+            "linux": 0.0,
+            "windows": 0.0
+          }
+        }
+      },
+      {
+        "name": "A8",
+        "cpu": 8,
+        "ram": 56,
+        "price": 1.970,
+        "windows": 2.450,
+        "redhat": 0.0,
+        "rightScaleRCU": 8,
+        "pricing": {
+          "standard": {
+            "linux": 1.970,
+            "windows": 2.450
+          },
+          "basic": {
+            "linux": 0.0,
+            "windows": 0.0
+          }
+        }
+      },
+      {
+        "name": "A9",
+        "cpu": 16,
+        "ram": 112,
+        "price": 4.470,
+        "windows": 4.900,
+        "redhat": 0.0,
+        "rightScaleRCU": 16,
+        "pricing": {
+          "standard": {
+            "linux": 4.470,
+            "windows": 4.900
+          },
+          "basic": {
+            "linux": 0.0,
+            "windows": 0.0
+          }
+        }
+      },
+      {
+        "name": "D1",
+        "cpu": 1,
+        "ram": 3.5,
+        "price": 0.85,
+        "windows": 0.159,
+        "redhat": 0.0,
+        "rightScaleRCU": 0.25,
+        "pricing": {
+          "standard": {
+            "linux": 0.85,
+            "windows": 0.159
+          },
+          "basic": {
+            "linux": 0.070,
+            "windows": 0.130
+          }
+        }
+      },
+      {
+        "name": "D2",
+        "cpu": 2,
+        "ram": 7,
+        "price": 0.170,
+        "windows": 0.318,
+        "redhat": 0.0,
+        "rightScaleRCU": 0.5,
+        "pricing": {
+          "standard": {
+            "linux": 0.170,
+            "windows": 0.318
+          },
+          "basic": {
+            "linux": 0.140,
+            "windows": 0.260
+          }
+        }
+      },
+      {
+        "name": "D3",
+        "cpu": 4,
+        "ram": 14,
+        "price": 0.34,
+        "windows": 0.636,
+        "redhat": 0.0,
+        "rightScaleRCU": 1,
+        "pricing": {
+          "standard": {
+            "linux": 0.34,
+            "windows": 0.636
+          },
+          "basic": {
+            "linux": 0.280,
+            "windows": 0.520
+          }
+        }
+      },
+      {
+        "name": "D4",
+        "cpu": 8,
+        "ram": 28,
+        "price": 0.680,
+        "windows": 1.272,
+        "redhat": 0.0,
+        "rightScaleRCU": 2,
+        "pricing": {
+          "standard": {
+            "linux": 0.680,
+            "windows": 1.272
+          },
+          "basic": {
+            "linux": 0.560,
+            "windows": 1.040
+          }
+        }
+      },
+      {
+        "name": "D11",
+        "cpu": 2,
+        "ram": 14,
+        "price": 0.214,
+        "windows": 0.366,
+        "redhat": 0.0,
+        "rightScaleRCU": 1,
+        "pricing": {
+          "standard": {
+            "linux": 0.214,
+            "windows": 0.366
+          },
+          "basic": {
+            "linux": 0.175,
+            "windows": 0.3
+          }
+        }
+      },
+      {
+        "name": "D12",
+        "cpu": 4,
+        "ram": 28,
+        "price": 0.428,
+        "windows": 0.732,
+        "redhat": 0.0,
+        "rightScaleRCU": 2,
+        "pricing": {
+          "standard": {
+            "linux": 0.428,
+            "windows": 0.732
+          },
+          "basic": {
+            "linux": 0.35,
+            "windows": 0.6
+          }
+        }
+      },
+      {
+        "name": "D13",
+        "cpu": 8,
+        "ram": 56,
+        "price": 0.770,
+        "windows": 1.318,
+        "redhat": 0.0,
+        "rightScaleRCU": 8,
+        "pricing": {
+          "standard": {
+            "linux": 0.770,
+            "windows": 1.318
+          },
+          "basic": {
+            "linux": 0.63,
+            "windows": 1.08
+          }
+        }
+      },
+      {
+        "name": "D14",
+        "cpu": 16,
+        "ram": 112,
+        "price": 1.387,
+        "windows": 2.372,
+        "redhat": 0.0,
+        "rightScaleRCU": 16,
+        "pricing": {
+          "standard": {
+            "linux": 1.387,
+            "windows": 2.372
+          },
+          "basic": {
+            "linux": 0.0,
+            "windows": 0.0
+          }
+        }
       }
     ]
   }

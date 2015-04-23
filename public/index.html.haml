@@ -4,6 +4,9 @@
       .platform-select
         %label{for: ""} Compare to
         %select{id: "platform-select", name: "platform"}
+      .platform-select{style: "margin-left:15px;"}
+        %label{for: ""} Currency
+        %select{id: "currency-select", name: "currencyId"}
       .actions
         %a.btn.share-btn{href: "#"} Share
         %a.btn.reset-btn{href: "#"} Reset
@@ -11,6 +14,10 @@
         %tr
           %th{style: "width: 75px;"} # of VMs
           %th Operating System
+          %th.pricing-tier{style: "display:none;"} 
+            Azure VM Service Tier
+            .tooltip-wrapper
+              %a.has-tooltip{href:"#", data: {placement: "right", toggle: "tooltip", title: "Vertical auto-scaling is a standard feature included in CenturyLink Cloud services whereas horizontal auto-scaling is included in Azure Standard tier virtual machine service.  Auto-scaling is not available in Azure's Basic tier virtual machine service."}}
           %th{style: "width: 235px;"} 
             Persistent Storage (EBS)
             .tooltip-wrapper
@@ -23,16 +30,20 @@
             Daily Snapshots
             .tooltip-wrapper
               %a.has-tooltip{href:"#", data: {toggle: "tooltip", title: "Our standard storage includes 5 days of rolling VM snapshots; Premium includes 14 days at a secondary data center."}}
-          %th 
+          %th.load-balancing{style: "display: none;"} 
+            Load Balancing
+            .tooltip-wrapper
+              %a.has-tooltip{href:"#", data: {toggle: "tooltip", title: "Load balancing is included in Azure's Standard tier virtual machine service but is not available for the Basic service tier. Load balancing is a bolt-on feature for CenturyLink Cloud."}}
+          %th{style: "width:127px;"} 
             Match CPU/RAM Performance 
             .tooltip-wrapper
               %a.has-tooltip{href:"#", data: {toggle: "tooltip", title: "Match CenturyLink VM Performance vs competitors based on CloudHarmony.com benchmarks."}}
-          %th 
+          %th.iops
             Match IOPS Performance 
             .tooltip-wrapper
               %a.has-tooltip{href:"#", data: {toggle: "tooltip", title: "Match CenturyLink VM IOPS performance vs competitors based on CloudHarmony.com benchmarks."}}
-          %th{style: "width: 280px;"} IOPS Manual Entry
-          %th Provisioned IOPS
+          %th.iops{style: "width: 280px;"} IOPS Manual Entry
+          %th.iops Provisioned IOPS
         %tr
           %td{style: "width: 65px;"}
             %input.number{value: "", name: "quantity", type:"text"}
@@ -41,6 +52,10 @@
               %option{value: "linux"} Linux
               %option{value: "windows"} Windows
               %option{value: "redhat"} Red Hat
+          %td.pricing-tier{style: "display:none;"}
+            %select{name: "pricingTier"}
+              %option{value: "standard" } Standard
+              %option{value: "basic"} Basic
           %td 
             %input.number{name: "storage", value: "", type:"text"}
             (GB)
@@ -49,20 +64,24 @@
             (GB)
           %td
             %select{name: "snapshots"}
-              %option 5
-              %option 14
+              %option{value: "5"} 5
+              %option{value: "14"} 14
+          %td.load-balancing{style: "display: none;"} 
+            %input{type: "checkbox", name: "loadBalancing"}
           %td 
             %input{type: "checkbox", name: "matchCPU"}
-          %td 
+          %td.iops 
             %input{type: "checkbox", name: "matchIOPS"}
-          %td 
+          %td.iops 
             %input.number{name: "manual-iops", type:"text"}
-          %td
-            %span.provisioned-iops 
+          %td.iops
+            %span.provisioned-iops
             %input.number{type: "hidden", name: "iops", type:"text"}
 
       .additional-features
-        %h4 AWS Add-Ons (equivalent features built-in CenturyLink Cloud)
+        %h4 
+          %span.platform-name AWS 
+          Add-Ons (equivalent features built-in CenturyLink Cloud)
 
 %section#share-panel.share-section
   .container.share
@@ -79,11 +98,15 @@
 
 .container.main-container
   
-  .calculator-section
+  .calculator-section.clearfix
 
-    #platform-products-table.results-table{style: "width: 340px"}
-      .results-table__header{style: "width: 340px"}
-        = image_tag "aws-logo.png"
+    #platform-products-table.results-table{style: "width: 370px"}
+      .results-table__header{style: "width: 370px"}
+        %div.platform-image
+        %div.platform-image.aws{style: "display: none;"}
+          = image_tag "aws-logo.png"
+        %div.platform-image.azure{style: "display: none;"}
+          = image_tag "azure-logo.png"
       %table
         %tr
           %th.left-align Service
@@ -91,8 +114,8 @@
           %th RAM
           %th Hourly
 
-    #century-link-products-table.results-table{style: "width: 290px"}
-      .results-table__header{style: "width: 290px"}
+    #century-link-products-table.results-table{style: "width: 370px"}
+      .results-table__header{style: "width: 370px"}
         = image_tag "cl-black-logo.png"
         %p.description resource allocation equivalent
       %table
@@ -101,8 +124,8 @@
           %th RAM
           %th Hourly
  
-    #variances-table.results-table.results-table--variance{style: "width: 312px"}
-      .results-table__header{style: "width: 312px"}
+    #variances-table.results-table.results-table--variance{style: "width: 370px"}
+      .results-table__header{style: "width: 370px"}
         Variance
       %table
         %tr

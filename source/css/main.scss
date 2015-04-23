@@ -19,6 +19,7 @@ html {
 
 body {
   background: white;
+  font-family: 'Open Sans', sans-serif;
 }
 
 p, .price {
@@ -58,6 +59,10 @@ input[type=text], input[type=number] {
 
 /* Major layout
 ----------------------------------------------------- */
+  
+.container {
+  width: 1170px;
+}
 
 .main-container {
   // opacity: 0;
@@ -66,6 +71,10 @@ input[type=text], input[type=number] {
     opacity: 1;
     transition: opacity 300ms;
   }
+}
+
+.page-title {
+  background: transparent;
 }
 
 .page-form {
@@ -216,7 +225,15 @@ input[type=text], input[type=number] {
 
 .tooltip {
   width: 200px;
-  z-index: 19;
+  z-index: 190;
+}
+
+.load-balancing, .pricing-tier {
+  .tooltip-wrapper {
+    .tooltip {
+      font-size: 9px;
+    }
+  }
 }
 
 .rangeslider {
@@ -313,7 +330,7 @@ input[type=text], input[type=number] {
   line-height: 1.4;
   margin-top: 20px;
   margin-bottom: 50px;
-  overflow: hidden;
+  overflow: visible;
   
   h3 {
     margin-bottom: 0;
@@ -353,7 +370,7 @@ input[type=text], input[type=number] {
 .green-section {
   width: 100%;
   background: #00853f;
-  padding: 20px;
+  padding: 30px 20px 30px;
   overflow: hidden;
   z-index: 100;
   
@@ -541,6 +558,7 @@ input[type=text], input[type=number] {
   overflow: hidden;
   margin-top: 30px;
   margin-right: 30px;
+  overflow: visible;
   
   table {
     width: 100%;
@@ -563,6 +581,7 @@ input[type=text], input[type=number] {
 
     img {
       display: inline-block;
+      max-height: 51px;
     }
 
   }

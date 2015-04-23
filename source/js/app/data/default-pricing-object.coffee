@@ -1,0 +1,9 @@
+module.exports =
+  "cpu": 0.01
+  "ram": 0.015
+  "standardStorage": 0.0002
+  "premiumStorage": 0.0007
+  "bandwidth": 0.05
+  "windows": 0.04
+  "redhat": 0.04
+  "linux": 0

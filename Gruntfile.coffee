@@ -35,6 +35,8 @@ module.exports = (grunt) ->
              "#{source}/js/libs/lodash/dist/lodash.underscore.js"
              "#{source}/js/libs/backbone/backbone.js"
              "#{source}/js/libs/backbone.syphon/lib/backbone.syphon.js"
+             "#{source}/js/libs/bootstrap/dist/js/bootstrap.min.js"
+             "#{source}/js/libs/bootstrap/js/tooltip.js"
           ]
           dest: "#{output}/javascripts/vendor.js"
 
@@ -146,7 +148,7 @@ module.exports = (grunt) ->
         options:
           reload: true
       scripts:
-        files: ["#{source}/js/**/*.{js,coffee}"]
+        files: ["#{source}/js/**/*.{js,coffee,haml}"]
         tasks: ["browserify"]
         options: 
           spawn: true

@@ -4,10 +4,10 @@ VarianceView = Backbone.View.extend
   className: "variance"
 
   initialize: (options) ->
-
+    @app = options.app || {}
   render: ->
     template = require "../templates/variance.haml"
-    @$el.html template(model: @model)
+    @$el.html template(model: @model, app: @app)
 
     if @model.savings() > 0
       @$el.addClass("green")

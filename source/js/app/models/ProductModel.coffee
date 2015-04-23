@@ -35,30 +35,49 @@ ProductModel = Backbone.Model.extend
     iops = (@settings.get("iops") * @platformPricing.provisionedIOPSPerMonth) / @HOURS_PER_MONTH
     ebs = (215 * @platformPricing.provisionedPerGB) / @HOURS_PER_MONTH
     if @settings.get("iops") > 0
-      console.log iops, ebs
+      # console.log iops, ebs
       return iops + ebs
     else 
       return 0
 
   platformOSPrice: ->
-    if @settings.get("os") is "linux"
-      return 0
+    if App.platform.get("key") is "aws"
+      if @settings.get("os") is "linux"
+        return @.get("price")
+      else
+        return @.get(@settings.get("os")) + @.get("price")
+
+    else if App.platform.get("key") is "azure"
+      tier = @settings.get("pricingTier")
+      os = @settings.get("os")
+      pricing = @.get('pricing')[tier]
+      price = pricing[os]
+      return pricing[os]
+
+  isPlatformAvailable: ->
+    if App.platform.get("key") is "aws"
+      return true
+    else if App.platform.get("key") is "azure"
+      if @platformOSPrice() is 'Unavailable' or @platformOSPrice() is 0
+        return false
+      else
+        return true
     else
-      return @.get(@settings.get("os"))
+      return true
 
   platformTotalPrice: ->
     if @settings.get("iops") > 0
-      subtotal = (@.get("price") + @platformBandwidthPrice() + @platformIOPSPrice() + 
-                  @platformSnapshotPrice() + @platformOSPrice()) * @settings.get("quantity")
+      subtotal = (@platformBandwidthPrice() + @platformIOPSPrice() + 
+                  @platformSnapshotPrice() + @platformOSPrice())
     else
-      subtotal = (@.get("price") + @platformBandwidthPrice() + @platformIOPSPrice() + 
+      subtotal = (@platformBandwidthPrice() + @platformIOPSPrice() + 
                   @platformStoragePrice() + @platformSnapshotPrice() + @platformStorageIORequests() + 
-                  @platformOSPrice()) * @settings.get("quantity")
+                  @platformOSPrice())
 
-    total = subtotal
+    total = subtotal * @settings.get("quantity")
     
     # AWS Specific extras
-    if App.platform.get("key") is "aws"
+    if App.platform.get("key") is "aws" or App.platform.get("key") is "azure"
 
       # MCM
       if @settings.get("mcm")
@@ -72,6 +91,9 @@ ProductModel = Backbone.Model.extend
       if @settings.get("rightScale")
         perRCU = _.findWhere( @platformAdditionalFeatures, {"key": "rightScale"}).pricing
         total += @.get("rightScaleRCU") * perRCU
+
+    if @platformOSPrice() is 'Unavailable' or @platformOSPrice() is 0
+      total = 0
 
     return total
 
@@ -107,12 +129,21 @@ ProductModel = Backbone.Model.extend
   clcBandwidthPrice: ->
     @settings.get("bandwidth") * App.clcPricing.bandwidth / @HOURS_PER_MONTH
 
+  clcLoadBalancingPrice: ->
+    loadBalancePrice = 0.0
+    if @settings.get("platform") is "azure"
+      if @settings.get("loadBalancing") is true
+        loadBalancePrice = App.clcBenchmarking.azure.loadBalancing
+    return loadBalancePrice
+
   clcOSPrice: ->
     App.clcPricing[@settings.get("os")] * @clcEquivalentCpu()
 
-  clcTotalPrice: ->
-    (@clcRamPrice() + @clcCpuPrice() + @clcDiskPrice() + @clcBandwidthPrice() + @clcOSPrice()) * @settings.get("quantity")
-
+  clcTotalPrice: ->      
+    total = (@clcRamPrice() + @clcCpuPrice() + @clcDiskPrice() + @clcBandwidthPrice() + @clcOSPrice() + @clcLoadBalancingPrice()) * @settings.get("quantity")
+    if @platformOSPrice() is 'Unavailable' or @platformOSPrice() is 0
+      total = 0
+    return total
 
   #--------------------------------------------------------
   # Variance
@@ -122,10 +153,13 @@ ProductModel = Backbone.Model.extend
     @platformTotalPrice() - @clcTotalPrice()
 
   savings: ->
-    if @settings.get("quantity") > 0
-      return Math.round((1 - @clcTotalPrice() / @platformTotalPrice()) * 100)
-    else
+    if @platformOSPrice() is 'Unavailable' or @platformOSPrice() is 0
       return 0
+    else
+      if @settings.get("quantity") > 0
+        return Math.round((1 - (@clcTotalPrice()) / @platformTotalPrice()) * 100)
+      else
+        return 0
 
 
 module.exports = ProductModel

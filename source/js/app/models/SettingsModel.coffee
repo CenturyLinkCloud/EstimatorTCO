@@ -9,8 +9,11 @@ SettingsModel = Backbone.Model.extend
     snapshots: 5
     matchCPU: false
     matchIOPS: false
+    loadBalancing: false
+    pricingTier: "standard"
     iops: 0
     additionalFeatures: []
+    currencyId: "USD"
 
   initialize: ->
 

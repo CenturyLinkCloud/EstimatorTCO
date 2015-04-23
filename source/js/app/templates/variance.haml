@@ -1,3 +1,8 @@
-%td= accounting.formatMoney(@model.variance(), {precision: 3})
-%td= accounting.formatMoney(@model.variance() * 8765.81, {precision: 2})
-%td= "#{@model.savings()}%"
+- if @model.isPlatformAvailable()
+  %td= accounting.formatMoney(@model.variance() * window.App.currency.rate, {precision: 3, symbol: @app.currency.symbol })
+  %td= accounting.formatMoney(@model.variance() * 8765.81 * window.App.currency.rate, {precision: 2, symbol: @app.currency.symbol })
+  %td= "#{@model.savings()}%"
+- else
+  %td N/A
+  %td N/A
+  %td N/A

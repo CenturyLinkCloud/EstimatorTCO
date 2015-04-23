@@ -7,6 +7,7 @@ CenturyLinkProductsView = Backbone.View.extend
   productViews: []
 
   initialize: (options) ->
+    @app = options.app || {}
     PubSub.on("inputPanel:change", @updateProducts, @)
 
   setCollection: (productsCollection) ->
@@ -23,7 +24,9 @@ CenturyLinkProductsView = Backbone.View.extend
       $(".description", @$el).html "resource allocation equivalent"
 
     @productsCollection.each (product) =>
-      productView = new CenturyLinkProductView model: product
+      productView = new CenturyLinkProductView 
+        model: product
+        app: @app
       $("table", @$el).append productView.render().el
       @productViews.push productView
 
