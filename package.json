@@ -1,5 +1,9 @@
 {
-  "name": "tier3",
+  "name": "centurylinkcloud",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/CenturyLinkCloud/EstimatorTCO"
+  },
   "version": "0.0.1",
   "devDependencies": {
     "grunt": "^0.4.4",
