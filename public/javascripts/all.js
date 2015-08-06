@@ -162,7 +162,7 @@ module.exports = PlatformModel;
 var ProductModel;
 
 ProductModel = Backbone.Model.extend({
-  HOURS_PER_MONTH: 730,
+  HOURS_PER_MONTH: 720,
   initialize: function() {
     this.settings = App.settingsModel;
     this.platformBenchmarking = App.platform.get("benchmarking");

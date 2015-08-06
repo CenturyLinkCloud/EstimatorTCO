@@ -1,6 +1,6 @@
 ProductModel = Backbone.Model.extend
 
-  HOURS_PER_MONTH: 730
+  HOURS_PER_MONTH: 720
 
   initialize: ->
     @settings = App.settingsModel
@@ -11,23 +11,23 @@ ProductModel = Backbone.Model.extend
   #--------------------------------------------------------
   # Platform Pricing
   #--------------------------------------------------------
-  
+
   platformBandwidthPrice: ->
     @settings.get("bandwidth") * @platformPricing.bandwidthOutbound / @HOURS_PER_MONTH
 
   platformStoragePrice: ->
     @settings.get("storage") * @platformPricing.standardPerGB / @HOURS_PER_MONTH
-  
+
   platformStorageIORequests: ->
     5 * @platformPricing.perMillionRequests / @HOURS_PER_MONTH
-  
+
   platformSnapshotCapacityUtilized: ->
     if @settings.get("iops") > 0
       storage = 215
     else
-     storage = @settings.get("storage") 
+     storage = @settings.get("storage")
     (storage * @platformPricing.firstSnapshot) + (@settings.get("snapshots") - 1) * @platformPricing.remainingSnapshotsEach * storage
-  
+
   platformSnapshotPrice: ->
     (@platformSnapshotCapacityUtilized() * @platformPricing.snapshotPerGB) / @HOURS_PER_MONTH
 
@@ -37,7 +37,7 @@ ProductModel = Backbone.Model.extend
     if @settings.get("iops") > 0
       # console.log iops, ebs
       return iops + ebs
-    else 
+    else
       return 0
 
   platformOSPrice: ->
@@ -67,15 +67,15 @@ ProductModel = Backbone.Model.extend
 
   platformTotalPrice: ->
     if @settings.get("iops") > 0
-      subtotal = (@platformBandwidthPrice() + @platformIOPSPrice() + 
+      subtotal = (@platformBandwidthPrice() + @platformIOPSPrice() +
                   @platformSnapshotPrice() + @platformOSPrice())
     else
-      subtotal = (@platformBandwidthPrice() + @platformIOPSPrice() + 
-                  @platformStoragePrice() + @platformSnapshotPrice() + @platformStorageIORequests() + 
+      subtotal = (@platformBandwidthPrice() + @platformIOPSPrice() +
+                  @platformStoragePrice() + @platformSnapshotPrice() + @platformStorageIORequests() +
                   @platformOSPrice())
 
     total = subtotal * @settings.get("quantity")
-    
+
     # AWS Specific extras
     if App.platform.get("key") is "aws" or App.platform.get("key") is "azure"
 
@@ -85,7 +85,7 @@ ProductModel = Backbone.Model.extend
 
       # AlertLogic
       if @settings.get("alertLogic")
-        total += _.findWhere( @platformAdditionalFeatures, {"key": "alertLogic"}).pricing      
+        total += _.findWhere( @platformAdditionalFeatures, {"key": "alertLogic"}).pricing
 
       # RightScale
       if @settings.get("rightScale")
@@ -139,7 +139,7 @@ ProductModel = Backbone.Model.extend
   clcOSPrice: ->
     App.clcPricing[@settings.get("os")] * @clcEquivalentCpu()
 
-  clcTotalPrice: ->      
+  clcTotalPrice: ->
     total = (@clcRamPrice() + @clcCpuPrice() + @clcDiskPrice() + @clcBandwidthPrice() + @clcOSPrice() + @clcLoadBalancingPrice()) * @settings.get("quantity")
     if @platformOSPrice() is 'Unavailable' or @platformOSPrice() is 0
       total = 0
