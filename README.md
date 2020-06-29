@@ -1,3 +1,5 @@
+******** NO ACTIVE DEVELOPMENT: REPO IS ARCHIVED ***********
+
 # CenturyLink Cloud Total Cost of Ownership Estimator
 
 A simple calculator for estimating the total cost of ownership using CetnuryLink Cloud products and services, versus other cloud providers.
